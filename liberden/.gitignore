@@ -1,2 +1,6 @@
 /_pycache_
+client/_pycache_
+server/_pycache_
+server/book/_pycache_
+server/customer/_pycache_
 settings.py
