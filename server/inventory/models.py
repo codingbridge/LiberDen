@@ -1,6 +1,5 @@
 import uuid
 from django.db import models
-from django_mysql.models import ListTextField
 from book.models import Book
 
 MAX_CHAR_LENGTH = 100

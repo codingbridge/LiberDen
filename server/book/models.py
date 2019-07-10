@@ -26,7 +26,11 @@ class Language(models.Model):
     name = models.CharField(max_length=MAX_CHAR_LENGTH)
     is_deleted = models.BooleanField(default=False)
 
-class CoverOption(models.Model):
+class CoverType(models.Model):
+    name = models.CharField(max_length=MAX_CHAR_LENGTH)
+    is_deleted = models.BooleanField(default=False)
+
+class Genres(models.Model):
     name = models.CharField(max_length=MAX_CHAR_LENGTH)
     is_deleted = models.BooleanField(default=False)
 
@@ -83,7 +87,8 @@ class Book(models.Model):
     author = models.ForeignKey('Author', on_delete=models.DO_NOTHING)
     publisher = models.ForeignKey('Publisher', on_delete=models.DO_NOTHING)
     language = models.ForeignKey('Language', on_delete=models.DO_NOTHING)
-    cover_option = models.ForeignKey('CoverOption', on_delete=models.DO_NOTHING)
+    cover_type = models.ForeignKey('CoverType', on_delete=models.DO_NOTHING)
+    genres = models.ForeignKey('Genres', on_delete=models.DO_NOTHING)
     description = models.TextField()
     memo = models.CharField(max_length=MAX_CHAR_LENGTH_MEMO)
     word_count = models.PositiveIntegerField()
