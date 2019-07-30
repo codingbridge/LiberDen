@@ -1,17 +1,23 @@
-<div class="card">
+<div class="card" style="width: 30rem">
     <div class="row no-gutters">
+        {% if instance.image %}
         <div class="col-auto">
-            <img src="{{}}" class="img-fluid" alt="">
+            <img src="{{ instance.image.url }}" class="img-fluid" alt="{{ instance.title}} cover image">
         </div>
+        {% endif %}
         <div class="col">
             <div class="card-block px-2">
-                <h4 class="card-title">Title</h4>
-                <p class="card-text">Description</p>
-                <a href="#" class="btn btn-primary">BUTTON</a>
+                <h4 class="card-title">{{ instance.book.title }}</h4>
+                <p class="card-text">by {{ instance.book.author }}</p>
+                <p class="card-text"> {{ instance.book.publisher }}</p>
+                <p class="card-text">BL: {{ instance.book.publisher }}</p>
+                <p class="card-text">status: {{ instance.book.publisher }}</p>
+                <p class="card-text">{{ instance.book.description|linebreaks|truncatewords:20 }}</p>
+                <p class="card-text"> {{ instance.book.tags }}</p>
             </div>
         </div>
     </div>
     <div class="card-footer w-100 text-muted">
-        Footer stating cats are CUTE little animals
+        <a href="{{ instance.get_absolute_url }}" class="btn btn-primary my-2">View</a>
     </div>
 </div>
