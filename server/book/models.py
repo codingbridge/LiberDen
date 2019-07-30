@@ -63,11 +63,17 @@ class Category(TitleSlugModel, TraceModel):
     )
     type = models.CharField(max_length=2, choices=CATEGORY_TYPE)
 
+    def __str__(self):
+        return self.type + ":" + self.title
+    
     def save(self, *args, **kwargs):
         super(Category, self).save(*args, **kwargs)
 
 class Country(TitleSlugModel, TraceModel):    
     code = models.CharField(max_length=5)
+    
+    def __str__(self):
+        return self.title
     
     def save(self, *args, **kwargs):
         super(Country, self).save(*args, **kwargs)
@@ -76,13 +82,20 @@ class Author(TitleSlugModel, TraceModel):
     full_name = 'title'
     country = models.ForeignKey('Country', on_delete=models.DO_NOTHING, null=True, blank=True)
     mailing_address = models.CharField(max_length=200, null=True, blank=True)
-
+    
+    def __str__(self):
+        return self.title
+    
     def save(self, *args, **kwargs):
         super(Author, self).save(*args, **kwargs)
 
 class Publisher(TitleSlugModel, TraceModel):
     country = models.ForeignKey('Country', on_delete=models.DO_NOTHING, null=True, blank=True)
     mailing_address = models.CharField(max_length=200, null=True, blank=True)
+    
+    def __str__(self):
+        return self.title
+    
     def save(self, *args, **kwargs):
         super(Publisher, self).save(*args, **kwargs)
 
