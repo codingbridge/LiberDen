@@ -29,7 +29,10 @@ class InventoryQuerySet(models.QuerySet):
 class InventoryManager(models.Manager):
     def get_queryset(self):
         return InventoryQuerySet(self.model, using=self._db)
-
+    
+    def all(self):
+        return super().get_queryset().filter(Q~(status='R'))
+    
     def all_available(self):
         return super().get_queryset().filter(Q(status='A'))
 
