@@ -7,8 +7,7 @@ from .models import Inventory
 class LibraryView(ListView):
     template_name = "inventory/list.html"
     def get_queryset(self):
-        # request = self.request
-        return Inventory.objects.all_available()
+        return Inventory.objects.all()
 
 # def product_list_view(request):
 #     queryset = Inventory.objects.all_available()
