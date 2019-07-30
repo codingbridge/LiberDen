@@ -7,6 +7,11 @@ from server.book.models import Book, TitleSlugModel, TraceModel
 
 User = settings.AUTH_USER_MODEL
 
+class Document(models.Model):
+    description = models.CharField(max_length=255, blank=True)
+    document = models.FileField(upload_to='documents/')
+    uploaded_at = models.DateTimeField(auto_now_add=True)
+
 class InventoryQuerySet(models.QuerySet):
     def availabe_copies(self):
         return self.filter(Q(status='A'))
