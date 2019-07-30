@@ -41,7 +41,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'django_mysql',
     'server.book',
-    'server.customer'
+    'server.inventory',
 ]
 
 REST_FRAMEWORK = {
@@ -70,7 +70,7 @@ ROOT_URLCONF = 'liberden.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': ['templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [

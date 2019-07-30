@@ -1,108 +1,103 @@
 import uuid
-from django.db import models
-from django_mysql.models import ListTextField
+import hashlib
+from django.conf import settings
+from django.db import models, IntegrityError, transaction
+from django.core.validators import MaxValueValidator
+from django.template.defaultfilters import slugify
 
-MAX_CHAR_LENGTH = 100
-MAX_CHAR_LENGTH_DESCRIPTION = 200
-MAX_CHAR_LENGTH_MEMO = 500
+User = settings.AUTH_USER_MODEL
 
-class Country(models.Model):
-    name = models.CharField(max_length=MAX_CHAR_LENGTH)
-    other_name = models.CharField(max_length=MAX_CHAR_LENGTH)
-    is_deleted = models.BooleanField(default=False)
 
-class Author(models.Model):
-    full_name = models.CharField(max_length=MAX_CHAR_LENGTH)
-    country = models.ForeignKey('Country', on_delete=models.DO_NOTHING)
-    is_deleted = models.BooleanField(default=False)
+class TraceModel(models.Model):
+    user              = models.ForeignKey(User, blank=True, null=True, on_delete=models.DO_NOTHING)
+    created_datetime  = models.DateTimeField(auto_now_add=True)
+    modified_datetime = models.DateTimeField(auto_now=True)
+    #is_deleted        = models.BooleanField(default=False)
 
-class Publisher(models.Model):
-    name = models.CharField(max_length=MAX_CHAR_LENGTH)
-    country = models.ForeignKey('Country', on_delete=models.DO_NOTHING)
-    description = models.CharField(max_length=MAX_CHAR_LENGTH_DESCRIPTION)
-    is_deleted = models.BooleanField(default=False)
+    class Meta:
+       abstract = True
 
-class Language(models.Model):
-    name = models.CharField(max_length=MAX_CHAR_LENGTH)
-    is_deleted = models.BooleanField(default=False)
+    def save(self, *args, **kwargs):
+        super(TraceModel, self).save(*args, **kwargs)
 
-class CoverType(models.Model):
-    name = models.CharField(max_length=MAX_CHAR_LENGTH)
-    is_deleted = models.BooleanField(default=False)
+class TitleSlugModel(models.Model):
+    title       = models.CharField(max_length=100)
+    description = models.CharField(max_length=500, null=True, blank=True)
+    slug        = models.CharField(max_length=255, unique=True, null=True, blank=True)
+    slug_hash   = models.CharField(max_length=32, unique=True, null=True, blank=True)
 
-class Genres(models.Model):
-    name = models.CharField(max_length=MAX_CHAR_LENGTH)
-    is_deleted = models.BooleanField(default=False)
+    class Meta:
+       abstract = True
 
-class Subject(models.Model):
-    name = models.CharField(max_length=MAX_CHAR_LENGTH)
-    is_deleted = models.BooleanField(default=False)
+    def __str__(self):
+        return self.title
 
-class Series(models.Model):
-    name = models.CharField(max_length=MAX_CHAR_LENGTH)
-    other_name = models.CharField(max_length=MAX_CHAR_LENGTH)
-    description = models.CharField(max_length=MAX_CHAR_LENGTH_DESCRIPTION)
-    is_deleted = models.BooleanField(default=False)
+    def save(self, *args, **kwargs):
+        self.slug = slug = slugify(self.title)
+        # self.slug_hash = hashlib.md5(self.slug).encode('utf-8').hexdigest()
+        i = 0
+        while True:
+            try:
+                savepoint = transaction.savepoint()
+                res = super(TitleSlugModel, self).save(*args, **kwargs)
+                transaction.savepoint_commit(savepoint)
+                return res
+            except IntegrityError:
+                transaction.savepoint_rollback(savepoint)
+                i += 1
+                self.slug = '%s_%d' % (slug, i)
 
-class ATOSBookLevel(models.Model):
-    name = models.DecimalField(max_digits=3, decimal_places=1)
-    description = models.CharField(max_length=MAX_CHAR_LENGTH)
-    is_deleted = models.BooleanField(default=False)
+class Category(TitleSlugModel, TraceModel):
+    CATEGORY_TYPE = (
+        ('AR', 'ArPoints'),
+        ('AT', 'ATOS book level'),
+        ('C', 'Cover type'),
+        ('G', 'Genres'), 
+        ('IL', 'Interest level'),
+        ('L', 'Language'),
+        ('LL', 'Lexile level'),
+        ('RL', 'Reading level'),
+        ('QN', 'Quiz number'),
+        ('S', 'Subject'),
+        ('SE', 'Series')
+    )
+    type = models.CharField(max_length=2, choices=CATEGORY_TYPE)
 
-class ArPoints(models.Model):
-    name = models.DecimalField(max_digits=3, decimal_places=1)
-    description = models.CharField(max_length=MAX_CHAR_LENGTH)
-    is_deleted = models.BooleanField(default=False)
+    def save(self, *args, **kwargs):
+        super(Category, self).save(*args, **kwargs)
 
-# age group 
-class InterestLevel(models.Model):
-    name = models.CharField(max_length=MAX_CHAR_LENGTH)
-    description = models.CharField(max_length=MAX_CHAR_LENGTH)
-    is_deleted = models.BooleanField(default=False)
+class Country(TitleSlugModel, TraceModel):    
+    code = models.CharField(max_length=5)
+    
+    def save(self, *args, **kwargs):
+        super(Country, self).save(*args, **kwargs)
 
-class ReadingLevel(models.Model):
-    name = models.DecimalField(max_digits=3, decimal_places=1)
-    description = models.CharField(max_length=MAX_CHAR_LENGTH)
-    is_deleted = models.BooleanField(default=False)
+class Author(TitleSlugModel, TraceModel):
+    full_name = 'title'
+    country = models.ForeignKey('Country', on_delete=models.DO_NOTHING, null=True, blank=True)
+    mailing_address = models.CharField(max_length=200, null=True, blank=True)
 
-class LexileLevel(models.Model):
-    name = models.CharField(max_length=MAX_CHAR_LENGTH)
-    description = models.CharField(max_length=MAX_CHAR_LENGTH)
-    is_deleted = models.BooleanField(default=False)
+    def save(self, *args, **kwargs):
+        super(Author, self).save(*args, **kwargs)
 
-class QuizNumber(models.Model):
-    name = models.DecimalField(max_digits=3, decimal_places=1)
-    description = models.CharField(max_length=MAX_CHAR_LENGTH)
-    is_deleted = models.BooleanField(default=False)
+class Publisher(TitleSlugModel, TraceModel):
+    country = models.ForeignKey('Country', on_delete=models.DO_NOTHING, null=True, blank=True)
+    mailing_address = models.CharField(max_length=200, null=True, blank=True)
+    def save(self, *args, **kwargs):
+        super(Publisher, self).save(*args, **kwargs)
 
-class Rating(models.Model):
-    name = models.DecimalField(max_digits=2, decimal_places=1)
-    description = models.CharField(max_length=MAX_CHAR_LENGTH)
-    is_deleted = models.BooleanField(default=False)
+class Book(TitleSlugModel, TraceModel):
+    id           = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    isbn         = models.CharField(max_length=30)
+    sub_title    = models.CharField(max_length=200, null=True, blank=True)
+    author       = models.ForeignKey('Author', on_delete=models.DO_NOTHING)
+    publisher    = models.ForeignKey('Publisher', on_delete=models.DO_NOTHING, null=True, blank=True)
+    description  = models.TextField(null=True, blank=True)
+    memo         = models.CharField(max_length=500, null=True, blank=True)
+    word_count   = models.PositiveIntegerField(null=True, blank=True)
+    page_count   = models.PositiveIntegerField(null=True, blank=True)
+    ranking       = models.PositiveSmallIntegerField(default=0, validators=[MaxValueValidator(9)], null=True, blank=True)
+    categories   = models.ManyToManyField('Category')
 
-class Book(models.Model):
-    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    isbn = models.CharField(max_length=20)
-    title = models.CharField(max_length=MAX_CHAR_LENGTH_DESCRIPTION)
-    author = models.ForeignKey('Author', on_delete=models.DO_NOTHING)
-    publisher = models.ForeignKey('Publisher', on_delete=models.DO_NOTHING)
-    language = models.ForeignKey('Language', on_delete=models.DO_NOTHING)
-    cover_type = models.ForeignKey('CoverType', on_delete=models.DO_NOTHING)
-    genres = models.ForeignKey('Genres', on_delete=models.DO_NOTHING)
-    description = models.TextField()
-    memo = models.CharField(max_length=MAX_CHAR_LENGTH_MEMO)
-    word_count = models.PositiveIntegerField()
-    page_count = models.PositiveIntegerField()
-    subject = ListTextField(base_field=models.CharField(max_length=MAX_CHAR_LENGTH), size=20)
-    series = ListTextField(base_field=models.CharField(max_length=MAX_CHAR_LENGTH), size=20)
-    book_level = models.ForeignKey('ATOSBookLevel', on_delete=models.DO_NOTHING)
-    ar_points = models.ForeignKey('ArPoints', on_delete=models.DO_NOTHING)    
-    interest_level = models.ForeignKey('InterestLevel', on_delete=models.DO_NOTHING)
-    lexile_level = models.ForeignKey('LexileLevel', on_delete=models.DO_NOTHING)
-    quiz_number = models.ForeignKey('QuizNumber', on_delete=models.DO_NOTHING)
-    rating = models.ForeignKey('Rating', on_delete=models.DO_NOTHING)
-    reading_level = models.ForeignKey('ReadingLevel', on_delete=models.DO_NOTHING)
-    slug = models.SlugField()
-    create_datetime = models.DateTimeField(auto_now_add=True)
-    is_deleted = models.BooleanField(default=False)
-    deleted_datetime = models.DateTimeField(null=True, blank=True)
+    def save(self, *args, **kwargs):
+        super(Book, self).save(*args, **kwargs)

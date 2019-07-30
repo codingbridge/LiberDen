@@ -29,8 +29,8 @@ book.wishlistcount.readlistcount.favouritelistcount.include(inventory)
 
 
 class CustomerMembership(models.Model):
-    customer = models.ForeignKey('Customer', on_delete=models.DO_NOTHING)
-    membership = models.ForeignKey('Membership', on_delete=models.DO_NOTHING)
+    customer = models.ManyToManyField('Customer')
+    membership = models.ManyToManyField('Membership')
     purchase_date = models.DateField()
     expiry_date = models.DateField()
     activate_date = models.DateField()
@@ -40,18 +40,18 @@ class CustomerMembership(models.Model):
 
 # books that the customer has read
 class CustomerBookReadList(models.Model):
-    book = models.ForeignKey('Inventory', on_delete=models.DO_NOTHING)
-    customer = models.ForeignKey('Customer', on_delete=models.DO_NOTHING)
-    reader = models.ForeignKey('Person', on_delete=models.DO_NOTHING)
+    book = models.ManyToManyField('Inventory')
+    customer = models.ManyToManyField('Customer')
+    reader = models.ManyToManyField('Person')
     liked = models.BooleanField(default=False)
     rating = models.PositiveIntegerField()
     memo = models.CharField(max_length=MAX_CHAR_LENGTH_MEMO)
     create_datetime = models.DateTimeField(auto_now_add=True)
 
 class CustomerBookRequestList(models.Model):
-    book = models.ForeignKey('Inventory', on_delete=models.DO_NOTHING)
-    customer = models.ForeignKey('Customer', on_delete=models.DO_NOTHING)
-    reader = models.ForeignKey('Person', on_delete=models.DO_NOTHING)
+    book = models.ManyToManyField('Inventory')
+    customer = models.ManyToManyField('Customer')
+    reader = models.ManyToManyField('Person')
     expiry_date = models.DateField()
     create_datetime = models.DateTimeField(auto_now_add=True)
 
@@ -70,3 +70,5 @@ class CustomerBookOrderList(models.Model):
     # fullfill_datetime = models.DateTimeField()
     # fullfill_by = models.ForeignKey('Staff', on_delete=models.DO_NOTHING)
     
+class Delivery(models.Model):
+    pass
