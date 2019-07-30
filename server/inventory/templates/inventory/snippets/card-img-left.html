@@ -9,13 +9,12 @@
             <div class="card-block px-2">
                 <h4 class="card-title">{{ instance.book.title }}</h4>
                 <p class="card-text">by {{ instance.book.author }}</p>
-                <p class="card-text"> {{ instance.book.publisher }}</p>
-                <p class="card-text">BL: {{ instance.book.publisher }}</p>
+                <p class="card-text"> {{ instance.book.publisher }}</p>               
                 <p class="card-text">status: {{ instance.book.status }}</p>
                 <p class="card-text">call #: {{ instance.book.call_number }}</p>
                 <p class="card-text">{{ instance.book.description|linebreaks|truncatewords:20 }}</p>
-                <p>{% for tag in instance.book.tags %}
-                <span class="badge badge-light">tag.title</span>
+                <p>{% for tag in instance.book.categories %}
+                <span class="badge badge-light">{{ tag }}</span>
                 {% endfor %}</p>
             </div>
         </div>
