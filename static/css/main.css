@@ -1,4 +1,4 @@
-.p1[data-count]:after{
+.top-badge[data-count]:after{
     position:absolute;
     right:10%;
     top:8%;
