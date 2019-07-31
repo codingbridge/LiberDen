@@ -1,25 +1,44 @@
 <div class="card" style="width: 30rem">
     <div class="row no-gutters">
-        {% if instance.image %}
+        {% if instance.book.image %}
         <div class="col-auto">
-            <img src="{{ instance.image.url }}" class="img-fluid" alt="{{ instance.title}} cover image">
+            <div>
+                <a href="{{ instance.get_absolute_url }}">
+                    <img style="width: 8rem; height: 12rem" src="{{ instance.book.image.url }}" class="img-fluid" alt="{{ instance.title}} cover image">
+                </a>
+            </div>
+            <div style="margin: 10px 0 10px 10px; padding-right: 10px;">
+                <i class="fa fa-heart fa-2x" style="color:red" aria-hidden="true"></i>
+                {% if instance.status == 'A' %}                               
+                <i class="fa fa-shopping-cart fa-2x float-right" aria-hidden="true"></i>
+                {% endif %}
+            </div>
         </div>
         {% endif %}
         <div class="col">
             <div class="card-block px-2">
                 <h4 class="card-title">{{ instance.book.title }}</h4>
-                <p class="card-text">by {{ instance.book.author }}</p>
-                <p class="card-text"> {{ instance.book.publisher }}</p>               
-                <p class="card-text">status: {{ instance.book.status }}</p>
-                <p class="card-text">call #: {{ instance.book.call_number }}</p>
+                <span class="card-text">by {{ instance.book.author }}</span><br />
+                {% if instance.book.publisher %}
+                <span class="card-text"> {{ instance.book.publisher }}</span><br />
+                {% endif %}
+                {% if instance.book.page_count %}
+                <span class="card-text">Pages: {{ instance.book.page_count }}</span><br />
+                {% endif %}
+                {% if instance.book.word_count %}
+                <span class="card-text">Words: {{ instance.book.word_count }}</span><br />
+                {% endif %}
+                {% if instance.status == 'A' %}
+                <p class="card-text text-primary">Available #{{ instance.call_number }}</p>
+                {% endif %}
+                {% if instance.status == 'N' %}
+                <p class="card-text text-warning">Unavailable</p>
+                {% endif %}                
                 <p class="card-text">{{ instance.book.description|linebreaks|truncatewords:20 }}</p>
-                <p>{% for tag in instance.book.categories %}
-                <span class="badge badge-light">{{ tag }}</span>
+                <p>{% for tag in instance.book.categories.all %}
+                <span class="badge badge-light">{{ tag.title }}</span>
                 {% endfor %}</p>
             </div>
         </div>
-    </div>
-    <div class="card-footer w-100 text-muted">
-        <a href="{{ instance.get_absolute_url }}" class="btn btn-primary my-2">View</a>
     </div>
 </div>

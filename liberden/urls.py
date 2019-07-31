@@ -8,6 +8,7 @@ from server.inventory import views
 urlpatterns = [
     url(r'^library/$', LibraryView.as_view(), name='Libray' ),
     url(r'^upload/$', views.model_form_upload, name='Upload'),
+    # url(r'^updatecart$', views.update_cart, name='UpdateCart'),
     url(r'^admin/', admin.site.urls)
 ]
 if settings.DEBUG:

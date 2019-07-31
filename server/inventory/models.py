@@ -19,8 +19,8 @@ class InventoryQuerySet(models.QuerySet):
     def copies_by_status(self, status_code):
         return self.filter(Q(status=status_code))
     
-    def get(self, inventoryid):
-        return self.filter(Q(id=inventoryid))
+    def get_by_id(self, inventoryId):
+        return self.filter(Q(id=inventoryId))
 
     def book(self, bookid):
         return self.availabe_copies().filter(Q(book__id=bookid))
@@ -36,13 +36,10 @@ class InventoryManager(models.Manager):
         return InventoryQuerySet(self.model, using=self._db)
     
     def all(self):
-        return super().get_queryset().filter(Q~(status='R'))
+        return super().get_queryset().filter(~Q(status='R'))
     
     def all_available(self):
         return super().get_queryset().filter(Q(status='A'))
-
-    def get(self, inventoryid):
-        return super().get_queryset().get(inventoryid)
 
     def copies(self, status_code):
         return super().get_queryset().copies_by_status(status_code)

@@ -109,8 +109,12 @@ class Book(TitleSlugModel, TraceModel):
     memo         = models.CharField(max_length=500, null=True, blank=True)
     word_count   = models.PositiveIntegerField(null=True, blank=True)
     page_count   = models.PositiveIntegerField(null=True, blank=True)
-    ranking       = models.PositiveSmallIntegerField(default=0, validators=[MaxValueValidator(9)], null=True, blank=True)
+    ranking      = models.PositiveSmallIntegerField(default=0, validators=[MaxValueValidator(9)], null=True, blank=True)
     categories   = models.ManyToManyField('Category')
+    image        = models.ImageField(upload_to='images/', null=True, blank=True)
+
+    def __str__(self):
+        return self.title + ": " + self.sub_title
 
     def save(self, *args, **kwargs):
         super(Book, self).save(*args, **kwargs)
