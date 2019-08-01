@@ -69,6 +69,16 @@ MIDDLEWARE = [
 ROOT_URLCONF = 'liberden.urls'
 
 TEMPLATES = [
+    # {
+    #     'BACKEND': 'django.template.backends.Jinja2.Jinjia2',
+    #     'DIRS': ['templates'],
+    #     'APP_DIRS': True,
+    #     'OPTIONS': {
+    #         'environment': [
+    #             'liberden.jinja2.environment',
+    #         ],
+    #     },
+    # },
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
         'DIRS': ['templates'],

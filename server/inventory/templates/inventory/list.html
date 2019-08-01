@@ -6,9 +6,12 @@
 
     {% for obj in object_list %}
         <div class='col my-3'>
-        {% include 'inventory/snippets/card-img-left.html' with instance=obj %}  
-        
+            {% ifchanged obj.book %}
+            {% include 'inventory/snippets/card-img-left.html' with inventory=obj cart_items_count=1%}
+            {% endifchanged %}    
         </div>
+    {% empty %}
+        <div>Sorry, no books are found.</div>
     {% endfor %}
 </div>
 {% endblock %}

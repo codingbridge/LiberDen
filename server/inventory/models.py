@@ -12,61 +12,61 @@ class Document(models.Model):
     document = models.FileField(upload_to='documents/%Y/%m/%d/')
     uploaded_at = models.DateTimeField(auto_now_add=True)
 
-class InventoryQuerySet(models.QuerySet):
-    def availabe_copies(self):
-        return self.filter(Q(status='A'))
+# class InventoryQuerySet(models.QuerySet):
+#     def availabe_copies(self):
+#         return self.filter(Q(status='A'))
 
-    def copies_by_status(self, status_code):
-        return self.filter(Q(status=status_code))
+#     def copies_by_status(self, status_code):
+#         return self.filter(Q(status=status_code))
     
-    def get_by_id(self, inventoryId):
-        return self.filter(Q(id=inventoryId))
+#     def get_by_id(self, inventoryId):
+#         return self.filter(Q(id=inventoryId))
 
-    def book(self, bookid):
-        return self.availabe_copies().filter(Q(book__id=bookid))
+#     def book(self, bookid):
+#         return self.availabe_copies().filter(Q(book__id=bookid))
 
-    def books(self):
-        return self.availabe_copies().book_set.distinct()
+#     def books(self):
+#         return self.availabe_copies().book_set.distinct()
 
-    def books_by_category(self, name, value):
-        return self.books().filter(Q(category__type=name) & Q(category__title=value)).distinct()
+#     def books_by_category(self, name, value):
+#         return self.books().filter(Q(category__type=name) & Q(category__title=value)).distinct()
 
 class InventoryManager(models.Manager):
-    def get_queryset(self):
-        return InventoryQuerySet(self.model, using=self._db)
+    # def get_queryset(self):
+    #     return InventoryQuerySet(self.model, using=self._db)
     
     def all(self):
-        return super().get_queryset().filter(~Q(status='R'))
+        return super().get_queryset().filter(~Q(status='R')).order_by("book")
     
-    def all_available(self):
-        return super().get_queryset().filter(Q(status='A'))
+    # def all_available(self):
+    #     return super().get_queryset().filter(Q(status='A'))
 
-    def copies(self, status_code):
-        return super().get_queryset().copies_by_status(status_code)
+    def copies_count_by_id(self, bookid, status_code):
+        return super().get_queryset().filter(Q(book__id=bookid) & Q(status=status_code)).count()
 
-    def copies_count(self, status_code):
-        return super().get_queryset().copies_by_status(status_code).count()
+    # def copies_count(self, status_code):
+    #     return super().get_queryset().copies_by_status(status_code).count()
 
-    def book_copies(self, bookid):
-        return super().get_queryset().book(bookid)
+    # def book_copies(self, bookid):
+    #     return super().get_queryset().book(bookid)
 
-    def book_copies_count(self, bookid):
-        return super().get_queryset().book(bookid).count()
+    # def book_copies_count(self, bookid):
+    #     return super().get_queryset().book(bookid).count()
 
-    def books_count(self):
-        return super().get_queryset().books().count()
+    # def books_count(self):
+    #     return super().get_queryset().books().count()
 
-    def books_by_category(self, name, value):
-         return super().get_queryset().books_by_category(name, value)
+    # def books_by_category(self, name, value):
+    #      return super().get_queryset().books_by_category(name, value)
         
-    def books_by_category_count(self, name, value):
-         return super().get_queryset().books_by_category(name, value).count()
+    # def books_by_category_count(self, name, value):
+    #      return super().get_queryset().books_by_category(name, value).count()
     
-    def search(self, *args, **kwargs):
-        pass
+    # def search(self, *args, **kwargs):
+    #     pass
 
-    def is_available(self, inventoryid):
-        pass
+    # def is_available(self, inventoryid):
+    #     pass
 
 class Location(TitleSlugModel, TraceModel):
     pass
@@ -96,6 +96,9 @@ class Inventory(TraceModel):
     @property
     def price(self):
         return f'{self.price_currency} {self.price_amount}'
+
+    # class Meta:
+    #     order_with_respect_to = 'book'
 
 class CirculationManager(models.Manager):
     pass

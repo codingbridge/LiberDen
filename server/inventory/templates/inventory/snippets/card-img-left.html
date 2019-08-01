@@ -1,41 +1,41 @@
 <div class="card" style="width: 30rem">
     <div class="row no-gutters">
-        {% if instance.book.image %}
+        {% if inventory.book.image %}
         <div class="col-auto">
             <div>
-                <a href="{{ instance.get_absolute_url }}">
-                    <img style="width: 8rem; height: 12rem" src="{{ instance.book.image.url }}" class="img-fluid" alt="{{ instance.title}} cover image">
+                <a href="{{ inventory.get_absolute_url }}">
+                    <img style="width: 8rem; height: 12rem" src="{{ inventory.book.image.url }}" class="img-fluid" alt="{{ inventory.title}} cover image">
                 </a>
             </div>
             <div style="margin: 10px 0 10px 10px; padding-right: 10px;">
                 <i class="fa fa-heart fa-2x" style="color:red" aria-hidden="true"></i>
-                {% if instance.status == 'A' %}                               
-                <i class="fa fa-shopping-cart fa-2x float-right" aria-hidden="true"></i>
+                {% if inventory.available_count > 0 %}                          
+                <i class="fa fa-shopping-cart fa-2x float-right" style="color: blue;" aria-hidden="true"></i>
                 {% endif %}
             </div>
         </div>
         {% endif %}
         <div class="col">
             <div class="card-block px-2">
-                <h4 class="card-title">{{ instance.book.title }}</h4>
-                <span class="card-text">by {{ instance.book.author }}</span><br />
-                {% if instance.book.publisher %}
-                <span class="card-text"> {{ instance.book.publisher }}</span><br />
+                <h4 class="card-title">{{ inventory.book.title }}</h4>
+                {% if inventory.book.sub_title %}
+                <h6 class="card-title">{{ inventory.book.sub_title }}</h6>
                 {% endif %}
-                {% if instance.book.page_count %}
-                <span class="card-text">Pages: {{ instance.book.page_count }}</span><br />
+                <span class="card-text">by {{ inventory.book.author }}</span><br />
+                {% if inventory.book.publisher %}
+                <span class="card-text"> {{ inventory.book.publisher }}</span><br />
                 {% endif %}
-                {% if instance.book.word_count %}
-                <span class="card-text">Words: {{ instance.book.word_count }}</span><br />
+                {% if inventory.book.page_count %}
+                <span class="card-text">Pages: {{ inventory.book.page_count }}</span><br />
                 {% endif %}
-                {% if instance.status == 'A' %}
-                <p class="card-text text-primary">Available #{{ instance.call_number }}</p>
+                {% if inventory.book.word_count %}
+                <span class="card-text">Words: {{ inventory.book.word_count }}</span><br />
                 {% endif %}
-                {% if instance.status == 'N' %}
-                <p class="card-text text-warning">Unavailable</p>
-                {% endif %}                
-                <p class="card-text">{{ instance.book.description|linebreaks|truncatewords:20 }}</p>
-                <p>{% for tag in instance.book.categories.all %}
+                <span class="card-text"># {{ inventory.call_number }}</span>               
+                <span class="card-text text-primary">Available({{ inventory.available_count }})</span>
+                <span class="card-text text-warning">Unavailable({{ inventory.unavailable_count }})</span>                              
+                <p class="card-text">{{ inventory.book.description|linebreaks|truncatewords:20 }}</p>
+                <p>{% for tag in inventory.book.categories.all %}
                 <span class="badge badge-light">{{ tag.title }}</span>
                 {% endfor %}</p>
             </div>
