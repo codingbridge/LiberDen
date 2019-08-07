@@ -1,3 +1,8 @@
 from django.shortcuts import render
 
-# Create your views here.
+def about_page(request):
+    context = {
+        "title":"About Page",
+        "content":" Welcome to the about page."
+    }
+    return render(request, "about_page.html", context)

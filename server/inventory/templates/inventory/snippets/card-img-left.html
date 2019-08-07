@@ -5,13 +5,10 @@
             <div>
                 <a href="{{ inventory.get_absolute_url }}">
                     <img style="width: 8rem; height: 12rem" src="{{ inventory.book.image.url }}" class="img-fluid" alt="{{ inventory.title}} cover image">
-                </a>
+                </a>                
             </div>
-            <div style="margin: 10px 0 10px 10px; padding-right: 10px;">
-                <i class="fa fa-heart fa-2x" style="color:red" aria-hidden="true"></i>
-                {% if inventory.available_count > 0 %}                          
-                <a href><i class="fa fa-shopping-cart fa-2x float-right" style="color: blue;" aria-hidden="true"></i></a>
-                {% endif %}
+            <div>
+                {% include 'inventory/snippets/update-cart.html' with inventory=inventory cart=cart %}
             </div>
         </div>
         {% endif %}
@@ -31,19 +28,16 @@
                 {% if inventory.book.word_count %}
                 <span class="card-text">Words: {{ inventory.book.word_count }}</span><br />
                 {% endif %}
-                <span class="card-text"># {{ inventory.call_number }}</span>               
+                <span class="card-text"># {{ inventory.call_number }}</span>
                 <span class="card-text text-primary">Available({{ inventory.available_count }})</span>
-                <span class="card-text text-warning">Unavailable({{ inventory.unavailable_count }})</span>                              
+                {% if inventory.unavailable_count > 0 %}
+                <span class="card-text text-warning">Unavailable({{ inventory.unavailable_count }})</span>
+                {% endif %}                         
                 <p class="card-text">{{ inventory.book.description|linebreaks|truncatewords:20 }}</p>
                 <p>{% for tag in inventory.book.categories.all %}
-                <span class="badge badge-light">{{ tag.title }}</span>
+                <a href="?q={{ tag.type}}:{{tag.title }}"><span class="badge badge-light">{{ tag.title }}</span></a>
                 {% endfor %}</p>
-                <p>{{ request.session.cart_items }}</p>
             </div>
         </div>
-        <div class='col-12 col-md-6'>
-                {% include 'inventory/snippets/update-cart.html' with inventory=inventory cart=cart %}
-    
-            </div>
     </div>
 </div>

@@ -118,3 +118,6 @@ class Book(TitleSlugModel, TraceModel):
 
     def save(self, *args, **kwargs):
         super(Book, self).save(*args, **kwargs)
+
+    # class Meta:
+    #     ordering = ['-title', '-sub_title', '-id']

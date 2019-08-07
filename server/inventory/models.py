@@ -56,8 +56,13 @@ class InventoryManager(models.Manager):
     # def books_count(self):
     #     return super().get_queryset().books().count()
 
-    # def books_by_category(self, name, value):
-    #      return super().get_queryset().books_by_category(name, value)
+    def books_by_category(self, type, value):
+        if type is None or not type.strip():
+            return super().get_queryset().filter(Q(book__categories__title=value)).order_by("book") 
+        if value is None or not value.strip():
+            return super().get_queryset().filter(Q(book__categories__type=type)).order_by("book")
+
+        return super().get_queryset().filter(Q(book__categories__type=type) & Q(book__categories__title=value)).order_by("book")
         
     # def books_by_category_count(self, name, value):
     #      return super().get_queryset().books_by_category(name, value).count()

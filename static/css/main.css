@@ -1,14 +1,20 @@
+.top-badge {
+  position: relative;
+  white-space: nowrap;
+  margin-right: 24px;
+}
+
 .top-badge[data-count]:after{
-    position:absolute;
-    right:10%;
-    top:8%;
+    position: absolute;;
+    right:-16px!important;
+    top:-10px;
     content: attr(data-count);
-    font-size:40%;
-    padding:.2em;
+    font-size:80%;
+    padding:.4em;
     border-radius:50%;
     line-height:1em;
     color: white;
     background:rgba(255,0,0,.85);
     text-align:center;
-    min-width: 1em;
+    min-width: 1.5em;
   }
