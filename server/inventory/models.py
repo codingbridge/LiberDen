@@ -55,6 +55,51 @@ class InventoryManager(models.Manager):
 
     # def books_count(self):
     #     return super().get_queryset().books().count()
+    def get_name_value_pair(self, search):
+        if ':' in search:
+            name, value = search.split(':')
+        else:
+            name = None
+            value = search
+        
+        return name, value
+
+    def parse_search_string(self, search_string):
+        search = {'name':None, 'value':None}
+        search_string = search_string.lower()
+        if '|' in search_string:
+            sub_strings = search_string.split('|')
+            for sub in sub_strings:
+                name, value = get_name_value_pair(self, sub)
+                search['name'] = name
+                search['value'] = value
+                #result = self.get_filtered_queryset(result, sub)
+        else:
+            #result = self.get_filtered_queryset(result, search_string)
+
+
+        return search
+
+    def get_broad_search_queryset(self):
+        pass
+
+    def is_like_isbn(self, str):
+        pass   
+
+    def search_by_name_value(self, queryset, name, value):
+        if name == 'a':
+            result = queryset.filter(Q(book__author__title__icontains=value))
+        elif name == 'p':
+            result = queryset.filter(Q(book__publisher__title__icontains=value))
+        elif name == 'r':
+            result = queryset.filter(Q(book__ranking=value))
+        elif name == 'isbn':
+            result = queryset.filter(Q(book__isbn=value))
+        elif name == 'status':
+            result = queryset.filter(Q(status=value))
+        else:
+            result = queryset.filter(Q(book__categories__type=name) & Q(book__categories__title=value))
+        return result
 
     def get_filtered_queryset(self, queryset, search):
         if ':' in search:
@@ -68,18 +113,8 @@ class InventoryManager(models.Manager):
         elif value is None or not value.strip():
             result = queryset.filter((Q(book__title__icontains=s) for s in name))
         else:
-            if name == 'a':
-                result = queryset.filter(Q(book__author__title__icontains=value))
-            elif name == 'p':
-                result = queryset.filter(Q(book__publisher__title__icontains=value))
-            elif name == 'r':
-                result = queryset.filter(Q(book__ranking=value))
-            elif name == 'isbn':
-                result = queryset.filter(Q(book__isbn=value))
-            elif name == 'status':
-                result = queryset.filter(Q(status=value))
-            else:
-                result = queryset.filter(Q(book__categories__type=name) & Q(book__categories__title=value))
+            result = self.search_by_name_value(queryset, name, value)
+
         return result
 
     def books_search(self, search_string):
