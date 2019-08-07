@@ -9,7 +9,6 @@ from server import views
 
 urlpatterns = [
     url(r'^library/$', inventoryviews.LibraryView.as_view(), name='library' ),
-    # url(r'^library/category/<category>/', inventoryviews.LibraryView.as_view(), name='library' ),
     url(r'^upload-document/$', inventoryviews.upload_form_view, name='upload-document'),
     url(r'^cart/update/$', cartsviews.cart_update, name='update-cart'),
     url(r'^about/$', views.about_page, name='about'),

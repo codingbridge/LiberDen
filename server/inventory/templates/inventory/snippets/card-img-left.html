@@ -18,9 +18,9 @@
                 {% if inventory.book.sub_title %}
                 <h6 class="card-title">{{ inventory.book.sub_title }}</h6>
                 {% endif %}
-                <span class="card-text">by {{ inventory.book.author }}</span><br />
+                <span class="card-text">by <a href="?q=A:{{ inventory.book.author }}">{{ inventory.book.author }}</a></span><br />
                 {% if inventory.book.publisher %}
-                <span class="card-text"> {{ inventory.book.publisher }}</span><br />
+                <span class="card-text"><a href="?q=P:{{ inventory.book.publisher }}">{{ inventory.book.publisher }}</a></span><br />
                 {% endif %}
                 {% if inventory.book.page_count %}
                 <span class="card-text">Pages: {{ inventory.book.page_count }}</span><br />
@@ -29,7 +29,7 @@
                 <span class="card-text">Words: {{ inventory.book.word_count }}</span><br />
                 {% endif %}
                 <span class="card-text"># {{ inventory.call_number }}</span>
-                <span class="card-text text-primary">Available({{ inventory.available_count }})</span>
+                <span class="card-text text-primary">Available(<a href="?q=isbn:{{ inventory.book.isbn }}">{{ inventory.available_count }}</a>)</span>
                 {% if inventory.unavailable_count > 0 %}
                 <span class="card-text text-warning">Unavailable({{ inventory.unavailable_count }})</span>
                 {% endif %}                         

@@ -11,15 +11,8 @@ class LibraryView(ListView):
 
     def get_queryset(self):
         if self.request.method == 'GET':            
-            category = self.request.GET.get('q', None)            
-            if category is None or not category.strip():
-                whole = Inventory.objects.all()
-            else:
-                if ':' in category:
-                    type, value = category.split(':')
-                    whole = Inventory.objects.books_by_category(type, value)
-                else:    
-                    whole = Inventory.objects.books_by_category(None, category)
+            search = self.request.GET.get('q', None)
+            whole = Inventory.objects.books_search(search)    
             # TODO: need to find a better solution, using annotate ?
             for item in whole:
                 available_count = Inventory.objects.copies_count_by_id(item.book.id, 'A')
