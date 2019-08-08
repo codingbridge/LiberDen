@@ -61,7 +61,7 @@ class Category(TitleSlugModel, TraceModel):
         ('S', 'Subject'),
         ('SE', 'Series')
     )
-    type = models.CharField(max_length=2, choices=CATEGORY_TYPE)
+    type = models.CharField(max_length=3, choices=CATEGORY_TYPE)
     level = models.CharField(max_length=10, null=True, blank=True)
 
     def __str__(self):
