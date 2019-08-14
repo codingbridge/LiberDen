@@ -2,21 +2,23 @@ from random import choice
 from datetime import datetime, timedelta
 import re
 
-from rest_framework.views import APIView
 from django.contrib.auth.backends import ModelBackend
 from django.db.models import Q
-from django.contrib.auth import get_user_model
-from rest_framework import viewsets
+from django.contrib.auth import get_user_model, login, authenticate, logout
+# from django.contrib.auth.models import User
+from django.conf import settings
+from django.shortcuts import redirect, render
+from django.contrib import messages
+
+from rest_framework import viewsets, status, mixins
 from rest_framework.response import Response
-from rest_framework import status
-from rest_framework import mixins
+from rest_framework.views import APIView
 
 from .serializer import SmsSerializer,UserRegSerializer
 from .models import VerifyCode,ImageCode
 from .smsprovider import YunPian
 from .makeimage import GetImageCode
-
-from django.conf import settings
+from .forms import AuthenticateForm, UserCreateForm
 
 APIKEY = settings.APIKEY
 
@@ -147,3 +149,47 @@ class UserViewset(mixins.CreateModelMixin, mixins.UpdateModelMixin, mixins.Retri
 
     def perform_create(self, serializer):
         return serializer.save()
+
+
+
+def sign_up(request, user_form=None, incomplete_form=None):
+    """
+    View responsible for sign up (without facebook authorization)
+    :param user_form: for to validate input data and create new user (UserProfile and User)
+    :type user_form: `UserCreateForm()`
+    :param incomplete_form: (temporary) variable that determines whether the user_form contains errors
+    :type incomplete_form: `string`
+    """
+    if request.method == 'POST' and incomplete_form is None:
+        user_form = UserCreateForm(data=request.POST)
+        if user_form.is_valid():
+            username = user_form.clean_username()
+            password = user_form.clean_password2()
+            user_form.save()
+            user = authenticate(username=username, password=password)
+            login(request, user)
+            return redirect('/')
+        else:
+            messages.error(request, "Form invalid")
+            return sign_up(request, user_form=user_form, incomplete_form=True)
+    if incomplete_form is None or not incomplete_form:
+        user_form = UserCreateForm()
+    return render(request, 'sign_up.html', {'user_form': user_form})
+
+def logout_view(request):
+    logout(request)
+    return redirect('/')
+
+def sign_in(request, auth_form=None):
+    if request.user.is_authenticated:
+        redirect('/')
+    if request.method == 'POST':
+        form = AuthenticateForm(data=request.POST)
+        if form.is_valid():
+            login(request, form.get_user())
+            return redirect('/')
+        else:
+            auth_form = auth_form or AuthenticateForm()
+            return render(request, 'sign_in.html', {'auth_form': auth_form})
+    auth_form = AuthenticateForm()
+    return render(request, 'sign_in.html', {'auth_form': auth_form})

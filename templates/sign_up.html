@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="card" style="width: 20rem;">
+    <div class="card-body">
+        <h5 class="card-title text-center">Please sign up</h5>
+        <form class="form-signin" role="form" action="{% url 'sign_up' %}" method="POST">{% csrf_token %} 
+            {% autoescape off %}
+                {% for field in user_form %}
+
+                {% if field.errors %}<br/>
+                <span class="red">{{ field.errors.as_text }} </span>
+                <br/>{% endif %}
+                <div class="form-label-group">
+                    <label></label>
+                    {{ field }}                
+                </div>
+                {% endfor %}
+            {% endautoescape %}
+            <br/>
+            <button class="btn btn-primary btn-block text-uppercase" type="submit">Sign up</button>
+        </form>
+
+
+
+
+
+{% endblock %}

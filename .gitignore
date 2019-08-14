@@ -6,3 +6,5 @@ __pycache__/
 *.spec
 *.log
 local_settings.py
+*.whl
+*.doc

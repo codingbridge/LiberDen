@@ -1,5 +1,6 @@
 from datetime import datetime
-
+from django.utils import timezone
+from django.contrib.auth.models import User
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 
@@ -9,6 +10,7 @@ class UserProfile(AbstractUser):
                               verbose_name="性别")
     birthday = models.DateField(null=True, blank=True, verbose_name='出生年月')
     mobile = models.CharField(max_length=11, verbose_name="电话")
+    join_date = models.DateField()
 
     class Meta:
         verbose_name = "用户"
@@ -16,6 +18,22 @@ class UserProfile(AbstractUser):
 
     def __str__(self):
         return self.username
+
+def get_or_create_userprofile(user):
+    if user:
+        # up = get_object_or_404(UserProfile, user=user)
+        try:
+            up = UserProfile.objects.get(user=user)
+            if up:
+                return up
+        except ObjectDoesNotExist:
+            pass
+    up = UserProfile(user=user, join_date=timezone.now())
+    up.save()
+    return up
+
+
+User.profile = property(lambda u: get_or_create_userprofile(user=u))
 
 
 class ImageCode(models.Model):

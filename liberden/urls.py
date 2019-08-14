@@ -27,6 +27,8 @@ urlpatterns = [
 # 访问图片URL
     url(r'^media/(?P<path>.*)$', serve, {'document_root': settings.MEDIA_ROOT}),
 
+    url(r'^sign_up/$', usersviews.sign_up, name='sign_up'),
+    url(r'^sign_in/$', usersviews.sign_in, name='sign_in'),
     # url(r'^account/$', accountsviews.AccountHomeView.as_view(), name='account' ),
     url(r'^library/$', inventoryviews.LibraryView.as_view(), name='library' ),
     url(r'^upload-document/$', inventoryviews.upload_form_view, name='upload-document'),
