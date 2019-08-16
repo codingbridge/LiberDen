@@ -30,6 +30,7 @@ urlpatterns = [
     url(r'^signin/$', usersviews.signin_view, name='signin'),
     url(r'^logout/$', usersviews.logout_view, name='logout'),
     url(r'^settings/$', usersviews.edituser_view, name='settings'),
+    url(r'^password/$', usersviews.changepassword_view, name='changepassword'),
     # url(r'^account/$', accountsviews.AccountHomeView.as_view(), name='account' ),
     url(r'^library/$', inventoryviews.LibraryView.as_view(), name='library' ),
     url(r'^upload-document/$', inventoryviews.upload_form_view, name='upload-document'),

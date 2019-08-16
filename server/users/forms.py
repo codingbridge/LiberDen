@@ -46,6 +46,7 @@ class AuthenticateForm(AuthenticationForm):
 
 
 class UserChangeForm(UserChangeForm):
+    password = None
     first_name = forms.CharField(required=False, widget=forms.widgets.TextInput(attrs={'placeholder': 'First Name','class': "form-control"}))
     last_name = forms.CharField(required=False, widget=forms.widgets.TextInput(attrs={'placeholder': 'Last Name','class': "form-control"}))
     mobile = forms.CharField(required=True, widget=forms.widgets.TextInput(attrs={'placeholder': 'Mobile Phone','class': "form-control"}))
@@ -67,8 +68,7 @@ class UserChangeForm(UserChangeForm):
         model = User
 
 
-class PasswordChangeForm(PasswordChangeForm):
-    pass
+
 
 
 class PasswordResetForm(PasswordResetForm):

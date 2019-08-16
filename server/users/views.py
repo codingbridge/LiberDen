@@ -19,6 +19,8 @@ from .models import VerifyCode,ImageCode
 from .smsprovider import YunPian
 from .makeimage import GetImageCode
 from .forms import AuthenticateForm, UserCreateForm, UserChangeForm
+from django.contrib.auth.forms import PasswordChangeForm
+from django.contrib.auth import update_session_auth_hash
 
 from django.contrib.auth.decorators import login_required
 
@@ -177,3 +179,20 @@ def edituser_view(request, user_form=None, incomplete_form=None):
             return edituser_view(request, user_form=user_form, incomplete_form=True)        
     
     return render(request, 'settings.html', {'user_form': user_form})
+
+@login_required
+def changepassword_view(request):
+    if request.method == 'POST':
+        form = PasswordChangeForm(request.user, request.POST)
+        if form.is_valid():
+            user = form.save()
+            update_session_auth_hash(request, user)  # Important!
+            messages.success(request, 'Your password was successfully updated!')
+            return redirect('changepassword_view')
+        else:
+            messages.error(request, 'Please correct the error below.')
+    else:
+        form = PasswordChangeForm(request.user)
+    return render(request, 'changepassword.html', {
+        'form': form
+    })
