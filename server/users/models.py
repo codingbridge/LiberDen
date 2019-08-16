@@ -5,12 +5,12 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser
 
 class UserProfile(AbstractUser):
+    GENDER = [('m', 'Male'), ('f','Female'),('s', 'Secret')]
     name = models.CharField(max_length=30, null=True, blank=True, verbose_name="姓名")
-    gender = models.CharField(max_length=6, choices=(("male", u"男"), ("female", "女")), default="female",
+    gender = models.CharField(null=True, blank=True, max_length=6, choices=GENDER,
                               verbose_name="性别")
     birthday = models.DateField(null=True, blank=True, verbose_name='出生年月')
-    mobile = models.CharField(max_length=11, verbose_name="电话")
-    join_date = models.DateField()
+    mobile = models.CharField(max_length=11, unique=True, verbose_name="电话")
 
     class Meta:
         verbose_name = "用户"
@@ -18,23 +18,6 @@ class UserProfile(AbstractUser):
 
     def __str__(self):
         return self.username
-
-def get_or_create_userprofile(user):
-    if user:
-        # up = get_object_or_404(UserProfile, user=user)
-        try:
-            up = UserProfile.objects.get(user=user)
-            if up:
-                return up
-        except ObjectDoesNotExist:
-            pass
-    up = UserProfile(user=user, join_date=timezone.now())
-    up.save()
-    return up
-
-
-User.profile = property(lambda u: get_or_create_userprofile(user=u))
-
 
 class ImageCode(models.Model):
     codeid = models.CharField(max_length=40, verbose_name='验证码ID')
@@ -47,7 +30,6 @@ class ImageCode(models.Model):
 
     def __str__(self):
         return self.code
-
 
 class VerifyCode(models.Model):
     """

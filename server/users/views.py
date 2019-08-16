@@ -18,11 +18,11 @@ from .serializer import SmsSerializer,UserRegSerializer
 from .models import VerifyCode,ImageCode
 from .smsprovider import YunPian
 from .makeimage import GetImageCode
-from .forms import AuthenticateForm, UserCreateForm
+from .forms import AuthenticateForm, UserCreateForm, UserChangeForm
+
+from django.contrib.auth.decorators import login_required
 
 APIKEY = settings.APIKEY
-
-User = get_user_model()
 
 class CustomBackend(ModelBackend):
     def authenticate(self, request, username=None, password=None, **kwargs):
@@ -122,37 +122,7 @@ class SmsCodeViewset(mixins.CreateModelMixin, viewsets.GenericViewSet):
             }, status=status.HTTP_201_CREATED)
 
 
-class UserViewset(mixins.CreateModelMixin, mixins.UpdateModelMixin, mixins.RetrieveModelMixin,
-                  viewsets.GenericViewSet):
-    '''
-    用户
-    '''
-    serializer_class =  UserRegSerializer
-    queryset = User.objects.all()
-
-
-
-    def create(self, request, *args, **kwargs):
-        # 将post过来的数据传给UserRegSerializer进行序列化和验证
-        serializer = self.get_serializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        user = self.perform_create(serializer)
-        re_dict = serializer.data
-        re_dict["name"] = user.name if user.name else user.username
-        re_dict["success"] = '注册成功'
-
-        headers = self.get_success_headers(serializer.data)
-        return Response(re_dict, status=status.HTTP_201_CREATED, headers=headers)
-
-    def get_object(self):
-        return self.request.user
-
-    def perform_create(self, serializer):
-        return serializer.save()
-
-
-
-def sign_up(request, user_form=None, incomplete_form=None):
+def signup_view(request, user_form=None, incomplete_form=None):
     """
     View responsible for sign up (without facebook authorization)
     :param user_form: for to validate input data and create new user (UserProfile and User)
@@ -168,28 +138,42 @@ def sign_up(request, user_form=None, incomplete_form=None):
             user_form.save()
             user = authenticate(username=username, password=password)
             login(request, user)
-            return redirect('/')
+            return redirect('library')
         else:
             messages.error(request, "Form invalid")
-            return sign_up(request, user_form=user_form, incomplete_form=True)
+            return signup_view(request, user_form=user_form, incomplete_form=True)
+    
     if incomplete_form is None or not incomplete_form:
         user_form = UserCreateForm()
-    return render(request, 'sign_up.html', {'user_form': user_form})
+    
+    return render(request, 'signup.html', {'user_form': user_form})
 
 def logout_view(request):
     logout(request)
-    return redirect('/')
+    return redirect('library')
 
-def sign_in(request, auth_form=None):
+def signin_view(request, auth_form=None):
     if request.user.is_authenticated:
-        redirect('/')
+        redirect('library')
     if request.method == 'POST':
         form = AuthenticateForm(data=request.POST)
         if form.is_valid():
             login(request, form.get_user())
-            return redirect('/')
+            return redirect('library')
         else:
             auth_form = auth_form or AuthenticateForm()
-            return render(request, 'sign_in.html', {'auth_form': auth_form})
+            return render(request, 'signin.html', {'auth_form': auth_form})
     auth_form = AuthenticateForm()
-    return render(request, 'sign_in.html', {'auth_form': auth_form})
+    return render(request, 'signin.html', {'auth_form': auth_form})
+
+@login_required
+def edituser_view(request, user_form=None, incomplete_form=None):
+    if request.method == 'POST' and incomplete_form is None:
+        user_form = UserChangeForm(request.POST, instance=request.user)
+        if user_form.is_valid():
+            user_form.save()
+        else:
+            messages.error(request, "Form invalid")
+            return edituser_view(request, user_form=user_form, incomplete_form=True)        
+    
+    return render(request, 'settings.html', {'user_form': user_form})

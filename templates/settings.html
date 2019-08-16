@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="card" style="width: 20rem;">
+    <div class="card-body">
+        <h5 class="card-title text-center">Welcome {{request.user.username}}</h5>
+        <form class="form-signin" role="form" action="{% url 'settings' %}" method="POST">{% csrf_token %} 
+            {% autoescape off %}
+                {% for field in user_form %}
+
+                {% if field.errors %}<br/>
+                <span class="red">{{ field.errors.as_text }} </span>
+                <br/>{% endif %}
+                <div class="form-label-group">
+                    <br/>
+                    {{ field }}                
+                </div>
+                {% endfor %}
+            {% endautoescape %}
+            <br/>
+            <button class="btn btn-lg btn-primary btn-block text-uppercase" type="submit">Update</button>
+        </form>
+    </div>
+</div>
+{% endblock %}
+

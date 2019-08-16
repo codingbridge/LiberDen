@@ -17,8 +17,6 @@ DEBUG = True
 ALLOWED_HOSTS = ["localhost", "127.0.0.1"]
 
 
-# Application definition
-
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -59,16 +57,6 @@ MIDDLEWARE = [
 ROOT_URLCONF = 'liberden.urls'
 
 TEMPLATES = [
-    # {
-    #     'BACKEND': 'django.template.backends.Jinja2.Jinjia2',
-    #     'DIRS': ['templates'],
-    #     'APP_DIRS': True,
-    #     'OPTIONS': {
-    #         'environment': [
-    #             'liberden.jinja2.environment',
-    #         ],
-    #     },
-    # },
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
         'DIRS': ['templates'],
@@ -87,14 +75,11 @@ TEMPLATES = [
 WSGI_APPLICATION = 'liberden.wsgi.application'
 
 
-# Database
-# https://docs.djangoproject.com/en/2.2/ref/settings/#databases
-
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
         'HOST':'127.0.0.1',
-        'PORT':'3306',
+        'PORT':'3309',
         'OPTIONS': {
             'charset': 'utf8mb4',
             'read_default_file': './liberden/my.cnf'
@@ -194,6 +179,6 @@ APIKEY = "e58ec9b0ffa0cb7c5600fb52d1bde675"
 AUTH_USER_MODEL = 'users.UserProfile'
 
 # 使用自定义的登录规则
-AUTHENTICATION_BACKENDS = (
-    'users.views.CustomBackend',
-)
+# AUTHENTICATION_BACKENDS = (
+#     'users.views.CustomBackend',
+# )

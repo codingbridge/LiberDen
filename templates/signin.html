@@ -4,7 +4,7 @@
         <div class="card" style="width: 20rem;">
             <div class="card-body">
                 <h5 class="card-title text-center">Sign In</h5>
-                <form action="{% url 'sign_in' %}" method="POST" class="form-signin" role="form">{% csrf_token %}
+                <form action="{% url 'signin' %}" method="POST" class="form-signin" role="form">{% csrf_token %}
                     {% for field in auth_form %}
                     <div class="form-label-group">
                         <label></label>
