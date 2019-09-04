@@ -175,10 +175,4 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 #云片网设置
 APIKEY = "e58ec9b0ffa0cb7c5600fb52d1bde675"
 
-# 使用自定义的用户
 AUTH_USER_MODEL = 'users.UserProfile'
-
-# 使用自定义的登录规则
-# AUTHENTICATION_BACKENDS = (
-#     'users.views.CustomBackend',
-# )

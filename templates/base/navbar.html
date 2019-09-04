@@ -1,24 +1,23 @@
 {% url 'library' as home_url %}
 {% url 'about' as contact_url %}
-<!-- {% url 'products:list' as product_list_url %} -->
 {% url 'signin' as login_url %}
 {% url 'logout' as logout_url %}
 {% url 'signup' as register_url %}
 
-{% url 'account:home' as account_url %}
-{% url 'cart:home' as cart_url %}
+{% url 'settings' as account_url %}
+{% url '' as cart_url %}
 
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-3">
    <div class='container'>
   <a class="navbar-brand" href="{{ home_url }}">
     <!-- <img src="//getbootstrap.com/assets/brand/bootstrap-solid.svg" width="30" height="30" class="d-inline-block align-top" alt=""> -->
-    {% if brand_name %} {{brand_name }} {% else %}CFE eCommerce {% endif %}
+    {{brand_name }}
   </a>
-  <!-- <span data-badge="1" class="icon material-icons top-badge">shopping_cart</span> -->
   <span class="top-badge" data-count="{% if request.session.cart_items %} {{ request.session.cart_items }} {% else %} 0 {% endif %}">
       <i class="material-icons" style="color: rgba(255,255,255,.5);">shopping_cart</i>
   </span>
-  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" 
+  aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
     <span class="navbar-toggler-icon"></span>
   </button>
 
@@ -30,11 +29,6 @@
       <li class="nav-item {% if request.path == contact_url %}active{% endif %}">
         <a class="nav-link" href="{{ contact_url }}">About Us</a>
       </li>
-      <!-- <li class="nav-item {% if request.path == product_list_url %}active{% endif %}">
-        <a class="nav-link" href="{{ product_list_url }}">Products</a>
-      </li> -->
-
-
       {% if request.user.is_authenticated %}
        <li class="nav-item dropdown">
         <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -42,7 +36,6 @@
         </a>
         <div class="dropdown-menu" aria-labelledby="navbarDropdown">
           <a class="dropdown-item {% if request.path == account_url %}active{% endif %}" href="{{ account_url }}">Home</a>
-          <a class="dropdown-item" href="{{ account_url }}#billing">Billing</a>
  
           <div class="dropdown-divider"></div>
           <a class="dropdown-item" href="{{ logout_url }}">Logout</a>
@@ -56,23 +49,6 @@
         <a class="nav-link" href="{{ login_url }}">Login</a>
       </li>
       {% endif %}
-      <!-- <li class="nav-item {% if request.path == cart_url %}active{% endif %}">
-        <a class="nav-link" href="{{ cart_url }}"> 
-          <i class="material-icons">shopping_cart</i></a>
-      </li> -->
-
-       <!--  <li class="nav-item dropdown">
-         <span class='navbar-cart-count'>{{ request.session.cart_items }}</span>
-            <a class="nav-link dropdown-toggle" href="http://example.com" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-              Dropdown link
-            </a>
-            <div class="dropdown-menu dropdown-menu-left" aria-labelledby="navbarDropdownMenuLink">
-              <a class="dropdown-item" href="#">Action</a>
-              <a class="dropdown-item" href="#">Another action</a>
-              <a class="dropdown-item" href="#">Something else here</a>
-            </div>
-          </li> -->
-
     </ul>
     {% include 'inventory/snippets/search-form.html' %}
   </div>

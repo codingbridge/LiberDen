@@ -1,7 +1,7 @@
 import uuid
 from django.db import models
 from django.db.models import Q
-from .submodels.book import Book, Author, Publisher, Category
+from .submodels.book import Book
 from .submodels.common import TitleSlugModel, TraceModel, Location, Document
 from .utils import get_search_keywords_dict
 
@@ -86,3 +86,6 @@ class Inventory(TraceModel):
     @property
     def price(self):
         return f'{self.price_currency} {self.price_amount}'
+
+def Save_Inventory():
+    pass

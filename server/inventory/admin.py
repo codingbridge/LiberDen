@@ -1,5 +1,6 @@
 from django.contrib import admin
-from .models import Inventory, Location, Book, Author, Publisher, Category
+from .models import Inventory, Location
+from .submodels.book import Book, Author, Publisher, Category
 
 admin.site.register(Inventory)
 admin.site.register(Location)

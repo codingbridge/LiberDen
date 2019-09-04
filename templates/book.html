@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+{% block content %}
+<form class="form-signin" role="form" method="POST">{% csrf_token %} 
+<div class="card" style="width: 20rem;">
+    <div class="card-title">
+        <h5 class="card-title text-center">add a new book</h5>        
+        <div class="form-group row" style="margin-left:2rem">
+            <input class="form-control col-6" name="isbn" placeholder="isbn number" value="{{isbn}}">             
+            <button name="search" class="btn btn-primary btn-block text-uppercase col-4" type="submit">Search</button>
+        </div>
+    </div>
+    <div class="card-body">        
+        {% for key, value in data.items %}            
+            <label class="form-label">{{key}} :</label>
+            {% if key == "image" %}
+            <img width="64px" height="93px" src="{{value}}">
+            {% endif %}
+            <input name={{key}} class="form-control" value="{{value}}">            
+        {% endfor %}
+        <br/>
+        <button name="update" class="btn btn-primary btn-block text-uppercase col-4" type="submit">Update</button>        
+    </div>
+</div>
+</form>
+{% endblock %}

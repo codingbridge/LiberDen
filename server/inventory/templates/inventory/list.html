@@ -4,10 +4,10 @@
 {% block content %}
         <div class='row'>
 
-    {% for obj in object_list %}
+    {% for obj in items %}
         <div class='col my-3'>
             {% ifchanged obj.book %}
-            {% include 'inventory/snippets/card-img-left.html' with inventory=obj cart_items_count=1%}
+            {% include 'inventory/snippets/card-img-left.html' with inventory=obj %}
             {% endifchanged %}    
         </div>
     {% empty %}

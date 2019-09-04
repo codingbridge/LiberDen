@@ -1,5 +1,6 @@
 from django import forms
-from django.contrib.auth.forms import AuthenticationForm, UserCreationForm, UserChangeForm, PasswordChangeForm, PasswordResetForm
+from django.contrib.auth.forms import (AuthenticationForm, 
+UserCreationForm, UserChangeForm, PasswordChangeForm, PasswordResetForm)
 from django.utils.html import strip_tags
 from django.contrib.auth import get_user_model
 from django.core.validators import RegexValidator
@@ -11,11 +12,12 @@ User = get_user_model()
 
 class UserCreateForm(UserCreationForm):
     username = forms.CharField(required=True, widget=forms.widgets.TextInput(attrs={'placeholder': 'Username','class': "form-control"}))
+    mobile = forms.CharField(required=True, widget=forms.widgets.TextInput(attrs={'placeholder': 'mobile phone','class': "form-control"}),
+                             validators=[])
     password1 = forms.CharField(required=True, widget=forms.widgets.PasswordInput(attrs={'placeholder': 'Password','class': "form-control"}))
     password2 = forms.CharField(required=True,
                                 widget=forms.widgets.PasswordInput(attrs={'placeholder': 'Password Confirmation','class': "form-control"}))
-    mobile = forms.CharField(required=True, widget=forms.widgets.TextInput(attrs={'placeholder': 'mobile phone','class': "form-control"}),
-                             validators=[])
+    
 
     def is_valid(self):
         form = super(UserCreateForm, self).is_valid()
@@ -29,7 +31,7 @@ class UserCreateForm(UserCreationForm):
         return user
 
     class Meta:
-        fields = ['username', 'password1', 'password2', 'mobile', 'first_name', 'last_name']
+        fields = ['username', 'password1', 'password2', 'mobile']
         model = User
 
 
@@ -45,31 +47,24 @@ class AuthenticateForm(AuthenticationForm):
         return form
 
 
-class UserChangeForm(UserChangeForm):
+class UserEditForm(UserChangeForm):
     password = None
     first_name = forms.CharField(required=False, widget=forms.widgets.TextInput(attrs={'placeholder': 'First Name','class': "form-control"}))
     last_name = forms.CharField(required=False, widget=forms.widgets.TextInput(attrs={'placeholder': 'Last Name','class': "form-control"}))
     mobile = forms.CharField(required=True, widget=forms.widgets.TextInput(attrs={'placeholder': 'Mobile Phone','class': "form-control"}))
 
     def is_valid(self):
-        form = super(UserChangeForm, self).is_valid()
+        form = super(UserEditForm, self).is_valid()
         for f, error in self.errors.items():
             if f != '__all_':
                 self.fields[f].widget.attrs.update({'class': 'error', 'value': strip_tags(error)})
         return form
 
     def save(self):
-        user = super(UserChangeForm, self).save()
+        user = super(UserEditForm, self).save()
         return user
 
 
     class Meta:
         fields = ['first_name', 'last_name', 'mobile']
         model = User
-
-
-
-
-
-class PasswordResetForm(PasswordResetForm):
-    pass

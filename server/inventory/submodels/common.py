@@ -9,14 +9,14 @@ User = settings.AUTH_USER_MODEL
 
 class TraceModel(models.Model):
     user              = models.ForeignKey(User, blank=True, null=True, on_delete=models.DO_NOTHING)
-    created_datetime  = models.DateTimeField(auto_now_add=True)
+    created_datetime  = models.DateTimeField(auto_now_add=True, blank=True)
     modified_datetime = models.DateTimeField(auto_now=True)
 
     class Meta:
        abstract = True
 
-    def save(self, *args, **kwargs):
-        super(TraceModel, self).save(*args, **kwargs)
+    # def save(self, *args, **kwargs):
+    #     super(TraceModel, self).save(*args, **kwargs)
 
 class TitleSlugModel(models.Model):
     title       = models.CharField(max_length=100)
@@ -27,23 +27,22 @@ class TitleSlugModel(models.Model):
     class Meta:
        abstract = True
 
-    def __str__(self):
-        return self.title
+    # def __str__(self):
+    #     return self.title
 
-    def save(self, *args, **kwargs):
-        self.slug = slug = slugify(self.title)
-        # self.slug_hash = hashlib.md5(self.slug).encode('utf-8').hexdigest()
-        i = 0
-        while True:
-            try:
-                savepoint = transaction.savepoint()
-                res = super(TitleSlugModel, self).save(*args, **kwargs)
-                transaction.savepoint_commit(savepoint)
-                return res
-            except IntegrityError:
-                transaction.savepoint_rollback(savepoint)
-                i += 1
-                self.slug = '%s_%d' % (slug, i)
+    # def save(self, *args, **kwargs):
+    #     self.slug = slug = slugify(self.title)
+    #     # self.slug_hash = hashlib.md5(self.slug).encode('utf-8').hexdigest()
+    #     i = 0
+    #     while True:
+    #         try:
+    #             savepoint = transaction.savepoint()
+    #             super(TitleSlugModel, self).save(*args, **kwargs)
+    #             transaction.savepoint_commit(savepoint)                
+    #         except IntegrityError:
+    #             transaction.savepoint_rollback(savepoint)
+    #             i += 1
+    #             self.slug = '%s_%d' % (slug, i)
 
 class Document(models.Model):
     description = models.CharField(max_length=255, blank=True)
