@@ -27,13 +27,12 @@ urlpatterns = [
 
 
     url(r'^signup/$', usersviews.signup_view, name='signup'),
-    url(r'^signin/$', usersviews.signin_view, name='signin'),
+    url(r'^login/$', usersviews.signin_view, name='login'),
     url(r'^logout/$', usersviews.logout_view, name='logout'),
     url(r'^settings/$', usersviews.edituser_view, name='settings'),
     url(r'^password/$', usersviews.changepassword_view, name='changepassword'),
     url(r'^forgotpassword/$', usersviews.forgotpassword_view, name='forgotpassword'),
-    # url(r'^account/$', accountsviews.AccountHomeView.as_view(), name='account' ),
-    # url(r'^library/$', inventoryviews.LibraryView.as_view(), name='library' ),
+    url(r'^resetpassword/<uidb64>/<token>/$', usersviews.resetpassword_view, name='resetpassword'),
     url(r'^book/$', inventoryviews.book_add_view, name='book' ),
     url(r'^library/$', inventoryviews.inventory_page_view, name='library' ),
     url(r'^upload-document/$', inventoryviews.upload_form_view, name='upload-document'),

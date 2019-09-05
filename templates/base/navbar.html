@@ -1,9 +1,9 @@
+{% url 'book' as book_url %}
 {% url 'library' as home_url %}
 {% url 'about' as contact_url %}
-{% url 'signin' as login_url %}
+{% url 'login' as login_url %}
 {% url 'logout' as logout_url %}
 {% url 'signup' as register_url %}
-
 {% url 'settings' as account_url %}
 {% url '' as cart_url %}
 
@@ -26,6 +26,11 @@
       <li class="nav-item {% if request.path == home_url %}active{% endif %}">
         <a class="nav-link" href="{{ home_url }}">Library <span class="sr-only">(current)</span></a>
       </li>
+      {% if request.user.is_staff %}
+      <li class="nav-item {% if request.path == book_url %}active{% endif %}">
+        <a class="nav-link" href="{{ book_url }}">Book</a>
+      </li>
+      {% endif %}
       <li class="nav-item {% if request.path == contact_url %}active{% endif %}">
         <a class="nav-link" href="{{ contact_url }}">About Us</a>
       </li>
@@ -35,8 +40,7 @@
           Account
         </a>
         <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-          <a class="dropdown-item {% if request.path == account_url %}active{% endif %}" href="{{ account_url }}">Home</a>
- 
+          <a class="dropdown-item {% if request.path == account_url %}active{% endif %}" href="{{ account_url }}">Home</a> 
           <div class="dropdown-divider"></div>
           <a class="dropdown-item" href="{{ logout_url }}">Logout</a>
         </div>

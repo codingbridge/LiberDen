@@ -1,6 +1,9 @@
 import requests
+from django.contrib import messages
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
+from django.contrib.admin.views.decorators import staff_member_required
+from .models import Inventory
 from .submodels.book import Save_Book, BOOK_DATA, Set_Book_Data
 from .forms import DocumentForm
 
@@ -31,6 +34,7 @@ def fetch_google_isbn_api(isbn):
     data = response.json()
     return data
 
+@staff_member_required(login_url='login')
 def book_add_view(request):
     isbn = ""
     data = BOOK_DATA
@@ -45,7 +49,7 @@ def book_add_view(request):
             pass
     if request.method == 'POST' and "update" in request.POST:
         Save_Book(request.POST.get('isbn', None), request.session.get(SESSION_NAME_BOOK))
-    return render(request, 'book.html', {'isbn': isbn, 'data': data})
+    return render(request, 'inventory/book.html', {'isbn': isbn, 'data': data})
 
 def inventory_page_view(request):
     if request.method == 'GET':            
@@ -56,9 +60,10 @@ def inventory_page_view(request):
             available_count = Inventory.objects.copies_count_by_id(item.book.id, 'A')
             unavailable_count = Inventory.objects.copies_count_by_id(item.book.id, 'N')
             item.available_count = available_count
-            item.unavailable_count = unavailable_count        
+            item.unavailable_count = unavailable_count
         return render(request, 'inventory/list.html', { 'items': items })
 
+@staff_member_required(login_url='login')
 def upload_form_view(request):
     if request.method == 'POST':
         form = DocumentForm(request.POST, request.FILES)

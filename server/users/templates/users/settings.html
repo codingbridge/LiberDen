@@ -4,13 +4,9 @@
 <div class="card" style="width: 20rem;">
     <div class="card-body">
         <h5 class="card-title text-center">Welcome {{request.user.username}}</h5>
-        <form class="form-signin" role="form" action="{% url 'forgotpassword' %}" method="POST">{% csrf_token %} 
+        <form class="form-signin" role="form" action="{% url 'settings' %}" method="POST">{% csrf_token %} 
             {% autoescape off %}
                 {% for field in form %}
-
-                {% if field.errors %}<br/>
-                <span class="red">{{ field.errors.as_text }} </span>
-                <br/>{% endif %}
                 <div class="form-label-group">
                     <label for={{field.id_for_label}}>{{ field.label_tag }}</label>
                     {{ field }}             
@@ -18,9 +14,10 @@
                 {% endfor %}
             {% endautoescape %}
             <br/>
-            <button class="btn btn-lg btn-primary btn-block text-uppercase" type="submit">Submit</button>
+            <button class="btn btn-lg btn-primary btn-block text-uppercase" type="submit">Update</button>
+            <br/>
+            <a href="{% url 'changepassword' %}">change password</a>
         </form>
     </div>
 </div>
-
 {% endblock %}
