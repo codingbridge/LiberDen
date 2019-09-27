@@ -1,19 +1,7 @@
-# from decimal import Decimal
-# from django.conf import settings
-# from django.db import models
-# from django.db.models.signals import pre_save, post_save, m2m_changed
-from server.inventory.models import Inventory
-
-# def get_cart(request):
-#     return request.session.get("cart", {})
-
-# def add_to_cart(request, item_id):
-#     cart = get_cart(request)
-#     cart[item_id] = 1
-#     request.session["cart"] = cart
+# pylint: disable=missing-docstring
 
 
-class Cart(object):
+class Cart():
     def __init__(self, request):
         self.session = request.session
         cart = self.session.get("cart", {})
@@ -23,7 +11,7 @@ class Cart(object):
 
     def add(self, itemid):
         # if itemid not in self.cart:
-        self.cart[itemid]=1
+        self.cart[itemid] = 1
         self.save()
 
     def save(self):

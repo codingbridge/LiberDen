@@ -1,14 +1,12 @@
-from django.shortcuts import render
+# pylint: disable=missing-docstring
 from django.shortcuts import redirect
-# from django.http import JsonResponse
-# from server.inventory.models import Inventory
 from .models import Cart
 
 #cart = Cart(request)
 
 def cart_update(request):
     item_id = request.POST.get('inventory_id')
-    
+
     if item_id is not None:
         cart = Cart(request)
         if 'add_to_cart' in request.POST:
@@ -30,7 +28,7 @@ def cart_update(request):
         # else:
         #     cart_obj.Items.add(inventory_obj)
         #     #added = True
-    
+
         # cart_id = request.session.get("cart_id", None)
         # cart_obj = Cart.objects.new(user=request.user)
         # request.session['cart_id'] = cart_obj.id
@@ -38,17 +36,8 @@ def cart_update(request):
         # # request.session['cart_items'] = cart_id
         # request.session['cart_items'] = cart_obj.Items.count()
 
-        # request.session['cart_items'] = request.session['cart_id'] 
+        # request.session['cart_items'] = request.session['cart_id']
 
     # if 'cart_items' in request.session:
     #     print(request.session.cart_items, flush=True)
     return redirect(request.META.get('HTTP_REFERER', '/'))
-        
-    #     if request.is_ajax(): # Asynchronous JavaScript And XML / JSON            
-    #         json_data = {
-    #             "added": added,
-    #             "removed": not added,
-    #             "cartItemCount": cart_obj.items.count()
-    #         }
-    #         return JsonResponse(json_data, status=200) 
-    # return redirect("library")

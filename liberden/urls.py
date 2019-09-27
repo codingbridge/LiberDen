@@ -1,5 +1,6 @@
+# pylint: disable=missing-docstring
 from django.contrib import admin
-from django.conf.urls import url, include
+from django.conf.urls import url
 from django.conf import settings
 from django.conf.urls.static import static
 from server.inventory import views as inventoryviews
@@ -20,9 +21,9 @@ from server import views
 
 urlpatterns = [
     # url(r'^', include(router.urls)),
-# 图片验证码
+    # 图片验证码
     # url(r'^imagecode', usersviews.ImageCodeView.as_view(), name='imagename'),
-# 访问图片URL
+    # 访问图片URL
     # url(r'^media/(?P<path>.*)$', serve, {'document_root': settings.MEDIA_ROOT}),
 
 
@@ -33,8 +34,9 @@ urlpatterns = [
     url(r'^password/$', usersviews.changepassword_view, name='changepassword'),
     url(r'^forgotpassword/$', usersviews.forgotpassword_view, name='forgotpassword'),
     url(r'^resetpassword/<uidb64>/<token>/$', usersviews.resetpassword_view, name='resetpassword'),
-    url(r'^book/$', inventoryviews.book_add_view, name='book' ),
-    url(r'^library/$', inventoryviews.inventory_page_view, name='library' ),
+    url(r'^book/$', inventoryviews.book_add_view, name='book'),
+    url(r'^inventory/$', inventoryviews.inventory_add_view, name='inventory' ),
+    url(r'^library/$', inventoryviews.inventory_page_view, name='library'),
     url(r'^upload-document/$', inventoryviews.upload_form_view, name='upload-document'),
     url(r'^cart/update/$', cartsviews.cart_update, name='update-cart'),
     url(r'^about/$', views.about_page, name='about'),

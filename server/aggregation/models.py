@@ -1,18 +1,61 @@
+# pylint: disable=missing-docstring
 import datetime
 from django.db import models
-# from django_mysql.models import ListTextField
-# from book.models import Book
-from inventory.models import Inventory
-from customer.models import (Customer, Person)
-from membership.models import Membership, DiscountCoupon
+from server.models import TraceModel
+from server.inventory.models import Inventory
+from server.readerpoints.models import PointsCard
 
-MAX_CHAR_LENGTH = 100
-MAX_CHAR_LENGTH_MEMO = 500
 
+class Circulation(TraceModel):
+    inventory = models.ForeignKey(Inventory, on_delete=models.CASCADE)
+    card = models.ForeignKey(PointsCard, on_delete=models.CASCADE)
+    borrowing_date = models.DateTimeField(auto_now_add=True)
+    return_date = models.DateTimeField()
+    is_returned = models.BooleanField(default=False)
+    memo = models.TextField(blank=True, null=True)
+
+def borrow_a_book(bookid, cardid, memo):
+    try:
+        card_obj = PointsCard.objects.get(id=cardid)
+        if card_obj.is_valid:
+            inventory_obj = Inventory.objects.get(id=bookid)
+            circulation_obj = Circulation()
+            circulation_obj.inventory = inventory_obj
+            circulation_obj.card = card_obj
+            circulation_obj.borrowing_date = datetime.datetime.now
+            if memo:
+                circulation_obj.memo = memo
+            circulation_obj.save()
+
+            card_obj.remain_quantity -= 1
+            card_obj.save()
+            return True
+    except PointsCard.objects.DoesNotExist:
+        return False, f'User Points Card is not found.'
+    except Inventory.objects.DoesNotExist:
+        return False, f'Book is not found in the inventory.'
+
+def return_a_book(bookid):
+    try:
+        circulation_obj = Circulation.objects.get(inventory__id=bookid)
+        if circulation_obj.is_returned:
+            circulation_obj.memo += f'Returned at {circulation_obj.return_date}|'
+        circulation_obj.is_returned = True
+        circulation_obj.return_date = datetime.datetime.now
+        circulation_obj.save()
+
+        card_obj = PointsCard.objects.get(id=circulation_obj.card.id)
+        card_obj.remain_quantity += 1
+        card_obj.save()
+        return True
+    except Circulation.objects.DoesNotExist:
+        return False, f'Book is not found.'
+    except PointsCard.objects.DoesNotExist:
+        return False, f'User Points Card does not exist.'
 '''
 aggregate root:
 
-visitor: 
+visitor:
 book.listAll, book.listByCategory, book.search, book.AddToShoppingCart
 
 login user:
@@ -24,9 +67,6 @@ profile.include(children).include(deliveryAddress)
 .include(membershiplist)
 
 book.wishlistcount.readlistcount.favouritelistcount.include(inventory)
-
-'''
-
 
 class CustomerMembership(models.Model):
     customer = models.ManyToManyField('Customer')
@@ -69,6 +109,7 @@ class CustomerBookOrderList(models.Model):
     # is_fulfilled = models.BooleanField(default=False)
     # fullfill_datetime = models.DateTimeField()
     # fullfill_by = models.ForeignKey('Staff', on_delete=models.DO_NOTHING)
-    
+
 class Delivery(models.Model):
     pass
+'''

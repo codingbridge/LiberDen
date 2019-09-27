@@ -4,11 +4,11 @@
 <form class="form-signin" role="form" method="POST">{% csrf_token %}
 <div class="card" style="width: 20rem;">
     <div class="card-title">
-        <h5 class="card-title text-center">add a new book</h5>
-        <div class="form-group row" style="margin-left:2rem">
+        <h5 class="card-title text-center">My Points Cards</h5>
+        <!-- <div class="form-group row" style="margin-left:2rem">
             <input class="form-control col-6" name="isbn" placeholder="isbn number" value="{{isbn}}">
             <button name="search" class="btn btn-primary btn-block text-uppercase col-4" type="submit">Search</button>
-        </div>
+        </div> -->
     </div>
     <div class="card-body">
         {% for key, value in data.items %}

@@ -1,3 +1,4 @@
+# pylint: disable=missing-docstring
 from django.shortcuts import render
 
 def about_page(request):

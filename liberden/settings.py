@@ -1,3 +1,4 @@
+# pylint: disable=missing-docstring
 import os
 import datetime
 
@@ -27,9 +28,12 @@ INSTALLED_APPS = [
     'rest_framework',
     'corsheaders',
     'django_mysql',
+    'server',
     'server.inventory',
     'server.carts',
     'server.users',
+    'server.readerpoints',
+    'server.aggregation'
 ]
 
 REST_FRAMEWORK = {

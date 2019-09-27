@@ -48,8 +48,8 @@ class Migration(migrations.Migration):
                 ('word_count', models.PositiveIntegerField(blank=True, null=True)),
                 ('page_count', models.PositiveIntegerField(blank=True, null=True)),
                 ('ranking', models.PositiveSmallIntegerField(blank=True, default=0, null=True, validators=[django.core.validators.MaxValueValidator(9)])),
-                ('image', models.ImageField(blank=True, null=True, upload_to='images/')),
-                ('author', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.DO_NOTHING, to='inventory.Author')),
+                ('image', models.CharField(blank=True, max_length=500, null=True)),
+                ('authors', models.ManyToManyField(to='inventory.Author')),
             ],
             options={
                 'abstract': False,
@@ -91,53 +91,6 @@ class Migration(migrations.Migration):
             },
         ),
         migrations.CreateModel(
-            name='Document',
-            fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('description', models.CharField(blank=True, max_length=255)),
-                ('document', models.FileField(upload_to='documents/%Y/%m/%d/')),
-                ('uploaded_at', models.DateTimeField(auto_now_add=True)),
-            ],
-        ),
-        migrations.CreateModel(
-            name='Membership',
-            fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('created_datetime', models.DateTimeField(auto_now_add=True)),
-                ('modified_datetime', models.DateTimeField(auto_now=True)),
-                ('title', models.CharField(max_length=100)),
-                ('description', models.CharField(blank=True, max_length=500, null=True)),
-                ('slug', models.CharField(blank=True, max_length=255, null=True, unique=True)),
-                ('slug_hash', models.CharField(blank=True, max_length=32, null=True, unique=True)),
-                ('price', models.DecimalField(decimal_places=2, max_digits=8)),
-                ('valid_in_days', models.PositiveIntegerField()),
-                ('max_book_count', models.PositiveIntegerField()),
-                ('user', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.DO_NOTHING, to=settings.AUTH_USER_MODEL)),
-            ],
-            options={
-                'abstract': False,
-            },
-        ),
-        migrations.CreateModel(
-            name='TestData',
-            fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('created_datetime', models.DateTimeField(auto_now_add=True)),
-                ('modified_datetime', models.DateTimeField(auto_now=True)),
-                ('title', models.CharField(max_length=100)),
-                ('description', models.CharField(blank=True, max_length=500, null=True)),
-                ('slug', models.CharField(blank=True, max_length=255, null=True, unique=True)),
-                ('slug_hash', models.CharField(blank=True, max_length=32, null=True, unique=True)),
-                ('content', models.CharField(max_length=10)),
-                ('author', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.DO_NOTHING, to='inventory.Author')),
-                ('categories', models.ManyToManyField(to='inventory.Category')),
-                ('user', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.DO_NOTHING, to=settings.AUTH_USER_MODEL)),
-            ],
-            options={
-                'abstract': False,
-            },
-        ),
-        migrations.CreateModel(
             name='Publisher',
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
@@ -149,38 +102,6 @@ class Migration(migrations.Migration):
                 ('slug_hash', models.CharField(blank=True, max_length=32, null=True, unique=True)),
                 ('mailing_address', models.CharField(blank=True, max_length=200, null=True)),
                 ('country', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.DO_NOTHING, to='inventory.Country')),
-                ('user', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.DO_NOTHING, to=settings.AUTH_USER_MODEL)),
-            ],
-            options={
-                'abstract': False,
-            },
-        ),
-        migrations.CreateModel(
-            name='MembershipCard',
-            fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('created_datetime', models.DateTimeField(auto_now_add=True)),
-                ('modified_datetime', models.DateTimeField(auto_now=True)),
-                ('is_valid_membership', models.BooleanField(default=True)),
-                ('membership_activated_date', models.DateTimeField()),
-                ('membership_expiry_date', models.DateTimeField()),
-                ('membership', models.ForeignKey(on_delete=django.db.models.deletion.DO_NOTHING, to='inventory.Membership')),
-                ('user', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.DO_NOTHING, to=settings.AUTH_USER_MODEL)),
-            ],
-            options={
-                'abstract': False,
-            },
-        ),
-        migrations.CreateModel(
-            name='Location',
-            fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('created_datetime', models.DateTimeField(auto_now_add=True)),
-                ('modified_datetime', models.DateTimeField(auto_now=True)),
-                ('title', models.CharField(max_length=100)),
-                ('description', models.CharField(blank=True, max_length=500, null=True)),
-                ('slug', models.CharField(blank=True, max_length=255, null=True, unique=True)),
-                ('slug_hash', models.CharField(blank=True, max_length=32, null=True, unique=True)),
                 ('user', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.DO_NOTHING, to=settings.AUTH_USER_MODEL)),
             ],
             options={
@@ -203,25 +124,6 @@ class Migration(migrations.Migration):
                 ('call_number', models.CharField(max_length=20, unique=True)),
                 ('is_retired', models.BooleanField(default=False)),
                 ('book', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='inventory.Book')),
-                ('location', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to='inventory.Location')),
-                ('user', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.DO_NOTHING, to=settings.AUTH_USER_MODEL)),
-            ],
-            options={
-                'abstract': False,
-            },
-        ),
-        migrations.CreateModel(
-            name='Circulation',
-            fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('created_datetime', models.DateTimeField(auto_now_add=True)),
-                ('modified_datetime', models.DateTimeField(auto_now=True)),
-                ('status', models.CharField(choices=[('CO', 'Check out'), ('OH', 'On hold'), ('R', 'Return'), ('L', 'Lost')], max_length=3)),
-                ('expiry_days', models.PositiveSmallIntegerField()),
-                ('memo', models.TextField()),
-                ('is_completed', models.BooleanField(default=False)),
-                ('handled_by', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.DO_NOTHING, related_name='Operator', to=settings.AUTH_USER_MODEL)),
-                ('inventory', models.ForeignKey(on_delete=django.db.models.deletion.DO_NOTHING, to='inventory.Inventory')),
                 ('user', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.DO_NOTHING, to=settings.AUTH_USER_MODEL)),
             ],
             options={

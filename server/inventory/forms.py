@@ -1,5 +1,6 @@
+# pylint: disable=missing-docstring
 from django import forms
-from .models import Document, Book
+from server.models import Document
 
 class DocumentForm(forms.ModelForm):
     class Meta:

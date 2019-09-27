@@ -1,8 +1,8 @@
 import json
 import requests
 
-
-class YunPian(object):
+# pylint: disable=missing-docstring
+class YunPian():
 
     def __init__(self, api_key):
         self.api_key = api_key

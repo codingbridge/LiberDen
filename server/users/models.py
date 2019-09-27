@@ -1,8 +1,9 @@
+# pylint: disable=missing-docstring
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 
 class UserProfile(AbstractUser):
-    GENDER = [('m', 'Male'), ('f','Female'),('s', 'Secret')]
+    GENDER = [('m', 'Male'), ('f', 'Female'), ('s', 'Secret')]
     name = models.CharField(max_length=30, null=True, blank=True, verbose_name="姓名")
     gender = models.CharField(null=True, blank=True, max_length=6, choices=GENDER,
                               verbose_name="性别")
