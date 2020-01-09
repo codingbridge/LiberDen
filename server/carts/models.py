@@ -1,21 +1,20 @@
 # pylint: disable=missing-docstring
-
+from django.db import models
 
 class Cart():
     def __init__(self, request):
         self.session = request.session
         cart = self.session.get("cart", {})
-        # if not cart:
-        #     cart = self.session["cart"] = {}
         self.cart = cart
 
     def add(self, itemid):
         # if itemid not in self.cart:
-        self.cart[itemid] = 1
+        self.cart[itemid] = '1' #itemid is unique always: book call_number
         self.save()
 
     def save(self):
         self.session["cart"] = self.cart
+        self.session['cart_items'] = len(self.cart)
         self.session.modified = True
 
     def remove(self, itemid):
@@ -24,12 +23,25 @@ class Cart():
             self.save()
 
     def __len__(self):
-        return sum(item for item in self.cart.values())
+        return len(self.cart.keys())
 
     def clear(self):
-        del self.session["cart"]
+        self.session["cart"] = {}
+        self.cart = {}
+        self.save()
         self.session.modified = True
 
+    def keys(self):
+        return self.cart.keys()
+
+class CartItem():
+    id = models.UUIDField()
+    title = models.CharField(max_length=100)
+    status = models.CharField(max_length=1)
+    image = models.CharField(max_length=500, null=True, blank=True)
+
+    def __str__(self):
+        return self.title
 # User = settings.AUTH_USER_MODEL
 
 # class CartManager(models.Manager):
@@ -80,9 +92,6 @@ class Cart():
 # #             instance.save()
 
 # # m2m_changed.connect(m2m_changed_cart_receiver, sender=Cart.products.through)
-
-
-
 
 # # def pre_save_cart_receiver(sender, instance, *args, **kwargs):
 # #     if instance.subtotal > 0:

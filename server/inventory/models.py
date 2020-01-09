@@ -10,7 +10,7 @@ from .utils import get_search_keywords_dict
 
 def search_by_name_value(queryset, name, value):
     if name == 'a' or name.lower() == 'author':
-        result = queryset.filter(Q(book__author__title__icontains=value))
+        result = queryset.filter(Q(book__authors__title__icontains=value))
     elif name == 'p' or name.lower() == 'publisher':
         result = queryset.filter(Q(book__publisher__title__icontains=value))
     elif name == 'r' or name.lower() == 'ranking':
@@ -46,7 +46,7 @@ class InventoryManager(models.Manager):
         pairs = get_search_keywords_dict(search_string.lower())
         for name in pairs:
             for value in pairs[name]:
-                result = self.search_by_name_value(result, name, value)
+                result = search_by_name_value(result, name, value)
 
         return result
 
@@ -85,9 +85,14 @@ class Inventory(TraceModel):
         return f'{self.price_currency} {self.price_amount}'
 
 def save_inventory(bookid, data):
-    book_obj = Book.objects.get(id=bookid)
-    item = Inventory()
-    item.book = book_obj
-    item.price_amount = Decimal(data['price'])
-    item.call_number = data['call_number']
-    item.save()
+    try:
+        book_obj = Book.objects.get(id=bookid)
+        item = Inventory()
+        item.book = book_obj
+        if data['price']:
+            item.price_amount = Decimal(data['price'])
+        item.call_number = data['call_number']
+        item.save()
+        return True
+    except Book.DoesNotExist:
+        return False, f'Book is not found.'

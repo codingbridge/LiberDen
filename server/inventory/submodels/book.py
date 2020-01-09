@@ -4,7 +4,8 @@ import requests
 from django.db import models
 from django.conf import settings
 from django.core.validators import MaxValueValidator
-from server.models import TitleSlugModel, TraceModel
+from server.models import TraceModel
+from server.models import TitleSlugModel
 
 class Category(TitleSlugModel, TraceModel):
     CATEGORY_TYPE = (
@@ -25,7 +26,6 @@ class Category(TitleSlugModel, TraceModel):
 
     def __str__(self):
         return self.type + ":" + self.title
-
 
 class Country(TitleSlugModel, TraceModel):
     code = models.CharField(max_length=5)
@@ -74,24 +74,24 @@ def save_book(isbn, data):
     try:
         Book.objects.get(isbn=isbn)
     except Book.DoesNotExist:
+        filepath = save_image(data['image'], isbn + ".jpg")
         book = Book()
         book.isbn = isbn
         book.title = data['title']
         book.description = data['description']
         book.page_count = int(data['pageCount'])
-        book.ranking = int(float(data['rating']) * 2)
-        publisher_obj = Publisher.objects.get_or_create(title=data['publisher'])
+        book.ranking = int(data['rating'])
+        publisher_obj, created = Publisher.objects.get_or_create(title=data['publisher'])
         book.publisher = publisher_obj
-        filepath = save_image(data['image'], isbn + ".jpg")
         book.image = filepath
         book.save()
         authors = data['author'].split(",")
         for auth in authors:
-            author_obj = Author.objects.get_or_create(title=auth)
+            author_obj, created = Author.objects.get_or_create(title=auth)
             book.authors.add(author_obj)
-        language_obj = Category.objects.get_or_create(
+        language_obj, created = Category.objects.get_or_create(
             type='L', title=data['language'])
-        genres_obj = Category.objects.get_or_create(
+        genres_obj, created = Category.objects.get_or_create(
             type='G', title=data['categories'])
         book.categories.add(language_obj, genres_obj)
 
@@ -100,9 +100,9 @@ def save_image(imgurl, filename):
     with open(filepath, 'wb') as handle:
         img_data = requests.get(imgurl, stream=True)
         if not img_data:
-            pass
+            return ''
         for block in img_data.iter_content(1024):
             if not block:
                 break
             handle.write(block)
-    return settings.MEDIA_URL + 'image/' + filename
+    return settings.MEDIA_URL + 'images/' + filename

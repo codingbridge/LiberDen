@@ -1,12 +1,12 @@
-<form class='' method='POST' action='{% url "update-cart" %}' data-endpoint='{% url "update-cart" %}' 
+<form class='add_to_cart' method='POST' action='{% url "update-cart" %}' data-endpoint='{% url "update-cart" %}'
 class="form"> {% csrf_token %}
     <input type='hidden' name='inventory_id' value='{{ inventory.id }}' />
       <p class='submit-span'>
-        {% if inventory.available_count > 0 %}  
-        <button name='add_to_cart' type='submit' class='btn btn-success'>add to cart</button>
+        {% if inventory.available_count > 0 %}
+        <button name='add_to_cart' type='submit' class='btn btn-success'>Add to Cart</button>
         <!-- <i class="material-icons">                add_shopping_cart                </i> -->
         {% endif %}
-        <a class="nav-link" href="" style="display: inline-block;" title="add to my favorite">
-            <i class="material-icons">favorite_border</i></a>
+        <!-- <a class="nav-link" href="" style="display: inline-block;" title="add to my favorite">
+            <i class="material-icons">favorite_border</i></a> -->
       </p>
 </form>

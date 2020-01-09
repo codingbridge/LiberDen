@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class='row'>
+    {% for inventory in items %}
+        <div class="card" style="width: 30rem">
+            <div class="row no-gutters">
+                <div class="col-auto">
+                    <img style="width: 4rem; height: 6rem" src="{{ inventory.image }}" class="img-fluid" alt="{{ inventory.title}} cover image">
+                    {{ inventory.title }}
+                    {% if inventory.status == 'A' %}
+                        {% include 'carts/update.html' with inventory=inventory button_name='remove_from_cart' button_label='Remove' %}
+                    {% else %}
+                        <span class="alert alert-danger">not available</span>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    {% empty %}
+        <div>Sorry, there is not any books in this cart.</div>
+    {% endfor %}
+</div>
+{% if items %}
+<div>
+    <p>
+        <form class='checkout_cart' method='POST' action='{% url "checkout-cart" %}' data-endpoint='{% url "checkout-cart" %}'
+        class="form"> {% csrf_token %}
+            <button name='checkout_cart' type='submit' class='btn btn-primary'>Checkout Now</button>
+        </form>
+        <form class='clear_cart' method='POST' action='{% url "clear-cart" %}' data-endpoint='{% url "clear-cart" %}'
+        class="form"> {% csrf_token %}
+            <button name='clear_cart' type='submit' class='btn btn-warning'>Remove all</button>
+        </form>
+    </p>
+</div>
+{% endif %}
+{% endblock %}

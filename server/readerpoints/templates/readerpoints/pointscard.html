@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+
+{% block content %}
+<form class="form-signin" role="form" method="POST">{% csrf_token %}
+    <input type='hidden' name='pointscard_id' value='{{ pointscard.id }}' />
+    <div class="card" style="width: 20rem;">
+        <div class="card-title">
+            <h5 class="card-title text-center">{{ pointscard }}</h5>
+        </div>
+        <div class="card-body">
+            <!-- <img width="64px" height="93px" src="{{ pointscard.image }}"> -->
+            <label class="form-label">{{ pointscard.price }} :</label>
+            <label class="form-label">{{ pointscard.quantity }} :</label>
+            <label class="form-label">{{ pointscard.expiry_type }} :</label>
+            <label class="form-label">{{ pointscard.expiry_num }} :</label>
+            <!-- <div class="form-group form-check"> -->
+                <!-- <input type="checkbox" class="form-check-input" id="enable_pointscard"> -->
+                <!-- <label class="enable_pointscard-label" for="enable_pointscard">Enable this pointscard</label> -->
+            <!-- </div> -->
+            <button name="purchase" class="btn btn-primary btn-block text-uppercase col-4" type="submit">Purchase</button>
+        </div>
+    </div>
+</form>
+{% endblock %}

@@ -17,4 +17,12 @@
     background:rgba(255,0,0,.85);
     text-align:center;
     min-width: 1.5em;
-  }
+}
+
+.star-wrapper i {
+  vertical-align: bottom;
+}
+
+.update_cart {
+  margin-top: 12px;
+}

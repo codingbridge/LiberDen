@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block content %}
+{% for pointscard in items %}
+    {% include 'readerpoints/pointscard.html' with pointscard=pointscard %}
+{% endfor %}
+
+<form class="form-signin" role="form" method="POST">{% csrf_token %}
+<div class="card" style="width: 20rem;">
+    <div class="card-title">
+        <h5 class="card-title text-center">Reader Points Cards</h5>
+    </div>
+    <div class="card-body">
+        {% include 'carts/update.html' with inventory=inventory button_name='remove_from_cart' button_label='Remove' %}
+
+        {% for key, value in data.items %}
+            <label class="form-label">{{key}} :</label>
+            {% if key == "image" %}
+            <img width="64px" height="93px" src="{{value}}">
+            {% endif %}
+            <input name={{key}} class="form-control" value="{{value}}">
+        {% endfor %}
+        <br/>
+        <button name="update" class="btn btn-primary btn-block text-uppercase col-4" type="submit">Update</button>
+    </div>
+</div>
+</form>
+{% endblock %}

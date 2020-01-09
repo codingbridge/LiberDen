@@ -1,42 +1,61 @@
 <div class="card" style="width: 30rem">
+    <div class="row no-gutters">All copies in use</div>
     <div class="row no-gutters">
         {% if inventory.book.image %}
         <div class="col-auto">
             <div>
-                <a href="{{ inventory.get_absolute_url }}">
-                    <img style="width: 8rem; height: 12rem" src="{{ inventory.book.image.url }}" class="img-fluid" alt="{{ inventory.title}} cover image">
-                </a>                
+                <!--<a href="{{ inventory.get_absolute_url }}">-->
+                    <img style="width: 8rem; height: 12rem" src="{{ inventory.book.image }}" class="img-fluid" alt="{{ inventory.book.title}} cover image">
+                <!--</a>-->
             </div>
             <div>
-                {% include 'inventory/snippets/update-cart.html' with inventory=inventory cart=cart %}
+                {% if inventory.status == "A"%}
+                {% include 'carts/update.html' with inventory=inventory cart=cart button_name='add_to_cart' button_label='Add to cart'%}
+                {% endif %}
             </div>
         </div>
         {% endif %}
         <div class="col">
             <div class="card-block px-2">
-                <h4 class="card-title">{{ inventory.book.title }}</h4>
+                <h6 class="card-title">{{ inventory.book.title }}</h6>
                 {% if inventory.book.sub_title %}
                 <h6 class="card-title">{{ inventory.book.sub_title }}</h6>
                 {% endif %}
-                <span class="card-text">by <a href="?q=A:{{ inventory.book.author }}">{{ inventory.book.author }}</a></span><br />
+                {% if inventory.book.authors.all %}
+                    <span class="card-text">By 
+                    {% for author in inventory.book.authors.all %}
+                    <a href="?q=A:{{ author }}">{{ author }}</a></span>
+                    {% endfor %}<br />
+                {% endif %}
                 {% if inventory.book.publisher %}
-                <span class="card-text"><a href="?q=P:{{ inventory.book.publisher }}">{{ inventory.book.publisher }}</a></span><br />
+                    <span class="card-text">(<a href="?q=P:{{ inventory.book.publisher }}">{{ inventory.book.publisher }}</a>)</span><br />
                 {% endif %}
                 {% if inventory.book.page_count %}
-                <span class="card-text">Pages: {{ inventory.book.page_count }}</span><br />
+                <span class="card-text">Pages: {{ inventory.book.page_count }}</span>
                 {% endif %}
                 {% if inventory.book.word_count %}
-                <span class="card-text">Words: {{ inventory.book.word_count }}</span><br />
+                <span class="card-text">      Words: {{ inventory.book.word_count }}</span><br />
                 {% endif %}
-                <span class="card-text"># {{ inventory.call_number }}</span>
-                <span class="card-text text-primary">Available(<a href="?q=isbn:{{ inventory.book.isbn }}">{{ inventory.available_count }}</a>)</span>
+                <!-- <span class="card-text"># {{ inventory.call_number }}</span> -->
+               <!--  <span class="card-text text-primary">Available(<a href="?q=isbn:{{ inventory.book.isbn }}">{{ inventory.available_count }}</a>)</span>
                 {% if inventory.unavailable_count > 0 %}
                 <span class="card-text text-warning">Unavailable({{ inventory.unavailable_count }})</span>
-                {% endif %}                         
+                {% endif %} -->
                 <p class="card-text">{{ inventory.book.description|linebreaks|truncatewords:20 }}</p>
                 <p>{% for tag in inventory.book.categories.all %}
                 <a href="?q={{ tag.type}}:{{tag.title }}"><span class="badge badge-light">{{ tag.title }}</span></a>
                 {% endfor %}</p>
+                <div class="star-wrapper">
+                    {% with ''|center:5 as range %}
+                    {% for i in range %}
+                    {% if forloop.counter > inventory.book.ranking %}
+                    <i class="material-icons">star_border</i>
+                    {% else %}
+                    <i class="material-icons">star</i>
+                    {% endif %}
+                    {% endfor %}
+                    {% endwith %}
+                </div>
             </div>
         </div>
     </div>

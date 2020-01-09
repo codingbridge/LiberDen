@@ -48,10 +48,11 @@ def delete_card(cardid):
         card = PointsCard.objects.get(id=cardid)
         card.is_deleted = True
         card.save()
+        return True
     except PointsCard.DoesNotExist:
-        pass
+        return False, f'Point Card is not found'
     except PointsCard.MultipleObjectsReturned:
-        pass
+        return False, f'Point Card has duplication.'
 
 # staff permission
 def deactivate_card(cardid):
@@ -59,21 +60,23 @@ def deactivate_card(cardid):
         card = PointsCard.objects.get(card__id=cardid)
         card.is_active = False
         card.save()
+        return True
     except PointsCard.DoesNotExist:
-        pass
+        return False, f'Point Card is not found'
     except PointsCard.MultipleObjectsReturned:
-        pass
+        return False, f'Point Card has duplication.'
 
 # staff permission
-def acivate_card(cardid):
+def activate_card(cardid):
     try:
         card = PointsCard.objects.get(id=cardid)
         card.is_active = True
         card.save()
+        return True
     except PointsCard.DoesNotExist:
-        pass
+        return False, f'Point Card is not found'
     except PointsCard.MultipleObjectsReturned:
-        pass
+        return False, f'Point Card has duplication.'
 
 # staff or user permission
 def puchase_card(cardtypeid, userid, isactivated):
@@ -87,14 +90,18 @@ def puchase_card(cardtypeid, userid, isactivated):
         card_obj.is_active = isactivated
         card_obj.holder = user_obj
         card_obj.save()
-    except PointsCardType.DoesNotExist:
-        pass
-    except PointsCardType.MultipleObjectsReturned:
-        pass
+        return True
+    except PointsCard.DoesNotExist:
+        return False, f'Point Card is not found'
+    except PointsCard.MultipleObjectsReturned:
+        return False, f'Point Card has duplication.'
     except UserProfile.DoesNotExist:
-        pass
+        return False, f'User profile is not found'
     except UserProfile.MultipleObjectsReturned:
-        pass
+        return False, f'User profile has duplication.'
 
 def get_cards(userid):
     return PointsCard.objects.get(holder__id=userid)
+
+def get_default_card(userid):
+    return get_cards(userid)[0]

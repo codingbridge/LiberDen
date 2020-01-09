@@ -1,0 +1,5 @@
+<form class='update_cart' method='POST' action='{% url "update-cart" %}' data-endpoint='{% url "update-cart" %}'
+class="form"> {% csrf_token %}
+    <input type='hidden' name='inventory_id' value='{{ inventory.id }}' />
+    <button name='{{button_name}}' type='submit' class='btn btn-primary'>{{button_label}}</button>
+</form>
