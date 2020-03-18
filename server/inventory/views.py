@@ -72,23 +72,24 @@ def fetch_google_isbn_api(isbn):
         data = response.json()
     return data
 
-@staff_member_required(login_url='login')
+# @staff_member_required(login_url='login')
 def book_add_view(request):
     isbn = ""
     data = BOOK_DATA
     if request.method == 'POST' and "search" in request.POST:
-        isbn = request.POST.get('isbn', None)
-        if isbn:
-            isbn = re.sub(r'\D', '', isbn)
-            result = fetch_google_isbn_api(isbn)
-            if result:
-                if result['totalItems'] == 0:
-                    messages.error(request, f"couldn't find book { isbn }")
+        isbn_list = request.POST.get('isbn', None)
+        for isbn in isbn_list
+            if isbn:
+                isbn = re.sub(r'\D', '', isbn)
+                result = fetch_google_isbn_api(isbn)
+                if result:
+                    if result['totalItems'] == 0:
+                        messages.error(request, f"couldn't find book { isbn }")
+                    else:
+                        data = set_book_data_from_json(result['items'][0]['volumeInfo'])
+                        request.session[SESSION_BOOK] = data
                 else:
-                    data = set_book_data_from_json(result['items'][0]['volumeInfo'])
-                    request.session[SESSION_BOOK] = data
-            else:
-                messages.error(request, "couldn't find book data from google.")
+                    messages.error(request, "couldn't find book data from google.")
     if request.method == 'POST' and "update" in request.POST:
         data = request.session.get(SESSION_BOOK)
         if not data:
@@ -96,7 +97,7 @@ def book_add_view(request):
         save_book(request.POST.get('isbn', None), data)
     return render(request, 'inventory/book.html', {'isbn': isbn, 'data': data})
 
-@staff_member_required(login_url='login')
+# @staff_member_required(login_url='login')
 def inventory_add_view(request):
     isbn = ""
     data = INVENTORY_DATA

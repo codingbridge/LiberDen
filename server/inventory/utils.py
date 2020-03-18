@@ -1,3 +1,4 @@
+# pylint: disable=missing-docstring
 
 def get_name_value_pair(search):
     if ':' in search:
@@ -27,3 +28,4 @@ def get_search_keywords_dict(search_string):
             result[name] = [value]
 
     return result
+

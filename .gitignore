@@ -1,11 +1,11 @@
 __pycache__/
-*.cnf
+# *.cnf
 *.pyc
 
 *.manifest
 *.spec
 *.log
 local_settings.py
-*.whl
+# *.whl
 *.doc
 *.txt
